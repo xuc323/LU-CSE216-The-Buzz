@@ -42,7 +42,7 @@ public class App {
         } else {
             // print out if database is connected successfully
             System.out.println("Database connected!");
-            db.createTable();
+            // db.createTable();
         }
 
         // Set up the location for serving static files. If the STATIC_LOCATION
@@ -70,6 +70,14 @@ public class App {
             response.status(200);
             response.type("application/json");
             return gson.toJson(new StructuredResponse("ok", null, db.selectAll()));
+        });
+
+        Spark.get("/hello", (req, res) -> {
+            return "Hello World!";
+        });
+
+        Spark.get("/message", (req, res) -> {
+            return "Message";
         });
 
     }

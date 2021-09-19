@@ -1,6 +1,6 @@
 # README #
 
-This README would normally document whatever steps are necessary to get your application up and running.
+This README documents the set up of Heroku.
 
 ### What is this repository for? ###
 

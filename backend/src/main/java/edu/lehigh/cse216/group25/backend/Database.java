@@ -9,6 +9,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 public class Database {
     /**
@@ -67,22 +68,49 @@ public class Database {
          * The ID of this row of the database
          */
         int mId;
+
         /**
          * The title stored in this row
          */
         String mTitle;
+
         /**
          * The message stored in this row
          */
         String mMessage;
 
         /**
-         * Construct a RowData object by providing values for its fields
+         * The number of likes
          */
-        public RowData(int id, String title, String message) {
+
+        int mLikes;
+
+        /**
+         * The number of dislikes
+         */
+
+        int mDislikes;
+
+        /**
+         * Date created the post
+         */
+
+        Date mDate;
+
+        /**
+         * Construct a RowData object by providing values for its fields
+         * 
+         * @param id      The id of the row
+         * @param title   The title/subject of the row
+         * @param message The message of the row
+         */
+        public RowData(int id, String title, String message, int likes, int dislikes, Date date) {
             mId = id;
             mTitle = title;
             mMessage = message;
+            mLikes = likes;
+            mDislikes = dislikes;
+            mDate = date;
         }
     }
 
@@ -96,11 +124,7 @@ public class Database {
     /**
      * Get a fully-configured connection to the database
      * 
-     * @param ip   The IP address of the database server
-     * @param port The port on the database server to which connection requests
-     *             should be sent
-     * @param user The user ID to use when connecting
-     * @param pass The password to use when connecting
+     * @param url The Postgres url to connect to Heroku Postgres database
      * 
      * @return A Database object, or null if we cannot connect properly
      */
@@ -143,6 +167,7 @@ public class Database {
 
             // Note: no "IF NOT EXISTS" or "IF EXISTS" checks on table
             // creation/deletion, so multiple executions will cause an exception
+            // TODO: change the SQL syntax
             db.mCreateTable = db.mConnection
                     .prepareStatement("CREATE TABLE tblData (id SERIAL PRIMARY KEY, title VARCHAR(50) "
                             + "NOT NULL, message VARCHAR(500) NOT NULL)");
@@ -218,7 +243,8 @@ public class Database {
         try {
             ResultSet rs = mSelectAll.executeQuery();
             while (rs.next()) {
-                res.add(new RowData(rs.getInt("id"), rs.getString("title"), null));
+                res.add(new RowData(rs.getInt("id"), rs.getString("title"), rs.getString("message"), rs.getInt("likes"),
+                        rs.getInt("dislikes"), rs.getDate("date")));
             }
             rs.close();
             return res;
@@ -241,7 +267,8 @@ public class Database {
             mSelectOne.setInt(1, id);
             ResultSet rs = mSelectOne.executeQuery();
             if (rs.next()) {
-                res = new RowData(rs.getInt("id"), rs.getString("title"), rs.getString("message"));
+                res = new RowData(rs.getInt("id"), rs.getString("title"), rs.getString("message"), rs.getInt("likes"),
+                        rs.getInt("dislikes"), rs.getDate("date"));
             }
         } catch (SQLException e) {
             e.printStackTrace();

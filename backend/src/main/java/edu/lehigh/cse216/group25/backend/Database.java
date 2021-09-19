@@ -168,15 +168,15 @@ public class Database {
             // Note: no "IF NOT EXISTS" or "IF EXISTS" checks on table
             // creation/deletion, so multiple executions will cause an exception
             // TODO: change the SQL syntax
-            db.mCreateTable = db.mConnection
-                    .prepareStatement("CREATE TABLE tblData (id SERIAL PRIMARY KEY, title VARCHAR(50) "
-                            + "NOT NULL, message VARCHAR(500) NOT NULL)");
+            db.mCreateTable = db.mConnection.prepareStatement(
+                    "CREATE TABLE tblData (id SERIAL PRIMARY KEY, title VARCHAR(50) NOT NULL, message VARCHAR(500) NOT NULL, likes INT NOT NULL, dislikes INT NOT NULL, date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP)");
             db.mDropTable = db.mConnection.prepareStatement("DROP TABLE tblData");
 
             // Standard CRUD operations
             db.mDeleteOne = db.mConnection.prepareStatement("DELETE FROM tblData WHERE id = ?");
-            db.mInsertOne = db.mConnection.prepareStatement("INSERT INTO tblData VALUES (default, ?, ?)");
-            db.mSelectAll = db.mConnection.prepareStatement("SELECT id, title FROM tblData");
+            db.mInsertOne = db.mConnection
+                    .prepareStatement("INSERT INTO tblData VALUES (default, ?, ?, 0, 0, default)");
+            db.mSelectAll = db.mConnection.prepareStatement("SELECT * FROM tblData");
             db.mSelectOne = db.mConnection.prepareStatement("SELECT * from tblData WHERE id=?");
             db.mUpdateOne = db.mConnection.prepareStatement("UPDATE tblData SET message = ? WHERE id = ?");
         } catch (SQLException e) {

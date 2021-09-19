@@ -41,8 +41,9 @@ public class App {
             return;
         } else {
             // print out if database is connected successfully
-            System.out.println("Database connected!");
+            System.out.println("Postgres database connected!");
             // db.createTable();
+
         }
 
         // Set up the location for serving static files. If the STATIC_LOCATION
@@ -72,12 +73,86 @@ public class App {
             return gson.toJson(new StructuredResponse("ok", null, db.selectAll()));
         });
 
-        Spark.get("/hello", (req, res) -> {
-            return "Hello World!";
+        // GET route that returns everything for a single row in the DataStore.
+        // The ":id" suffix in the first parameter to get() becomes
+        // request.params("id"), so that we can get the requested row ID. If
+        // ":id" isn't a number, Spark will reply with a status 500 Internal
+        // Server Error. Otherwise, we have an integer, and the only possible
+        // error is that it doesn't correspond to a row with data.
+        Spark.get("/messages/:id", (request, response) -> {
+            int idx = Integer.parseInt(request.params("id"));
+            // ensure status 200 OK, with a MIME type of JSON
+            response.status(200);
+            response.type("application/json");
+            Database.RowData data = db.selectOne(idx);
+            if (data == null) {
+                return gson.toJson(new StructuredResponse("error", idx + " not found", null));
+            } else {
+                return gson.toJson(new StructuredResponse("ok", null, data));
+            }
         });
 
-        Spark.get("/message", (req, res) -> {
-            return "Message";
+        // POST route for adding a new element to the DataStore. This will read
+        // JSON from the body of the request, turn it into a SimpleRequest
+        // object, extract the title and message, insert them, and return the
+        // ID of the newly created row.
+        Spark.post("/messages", (request, response) -> {
+            // NB: if gson.Json fails, Spark will reply with status 500 Internal
+            // Server Error
+            SimpleRequest req = gson.fromJson(request.body(), SimpleRequest.class);
+            // ensure status 200 OK, with a MIME type of JSON
+            // NB: even on error, we return 200, but with a JSON object that
+            // describes the error.
+            response.status(200);
+            response.type("application/json");
+            // NB: createEntry checks for null title and message
+            int newId = db.insertRow(req.mTitle, req.mMessage);
+            if (newId == -1) {
+                return gson.toJson(new StructuredResponse("error", "error performing insertion", null));
+            } else {
+                return gson.toJson(new StructuredResponse("ok", "" + newId, null));
+            }
+        });
+
+        // PUT route for updating a row in the DataStore. This is almost
+        // exactly the same as POST
+        // Spark.put("/messages/:id", (request, response) -> {
+        // // If we can't get an ID or can't parse the JSON, Spark will send
+        // // a status 500
+        // int idx = Integer.parseInt(request.params("id"));
+        // SimpleRequest req = gson.fromJson(request.body(), SimpleRequest.class);
+        // // ensure status 200 OK, with a MIME type of JSON
+        // response.status(200);
+        // response.type("application/json");
+        // int result = db.updateOne(idx, req.mMessage);
+        // if (result == -1) {
+        // return gson.toJson(new StructuredResponse("error", "unable to update row " +
+        // idx, null));
+        // } else {
+        // return gson.toJson(new StructuredResponse("ok", null, result));
+        // }
+        // });
+
+        // DELETE route for removing a row from the DataStore
+        // Spark.delete("/messages/:id", (request, response) -> {
+        // // If we can't get an ID, Spark will send a status 500
+        // int idx = Integer.parseInt(request.params("id"));
+        // // ensure status 200 OK, with a MIME type of JSON
+        // response.status(200);
+        // response.type("application/json");
+        // // NB: we won't concern ourselves too much with the quality of the
+        // // message sent on a successful delete
+        // int result = db.deleteRow(idx);
+        // if (result == -1) {
+        // return gson.toJson(new StructuredResponse("error", "unable to delete row " +
+        // idx, null));
+        // } else {
+        // return gson.toJson(new StructuredResponse("ok", null, null));
+        // }
+        // });
+
+        Spark.get("/hello", (req, res) -> {
+            return "Hello World!";
         });
 
     }

@@ -9,16 +9,10 @@
 - Returns a JSON listing of all messages in Database.
 
 * Accepts:
-  * NONE
+  - NONE
 * Returns:
-  * mStatus
-  * mData:
-    * mId
-    * mTitle
-    * mMessage
-    * mLikes
-    * mDislikes
-    * mDate
+  - mStatus
+  - mData: [mId, mTitle, mMessage, mLikes, mDislikes, mDate]
 
 ### GET - /messages/[message_id]
 

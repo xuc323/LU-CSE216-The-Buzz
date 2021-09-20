@@ -8,25 +8,20 @@
 
 - Returns a JSON listing of all messages in Database.
 
-* Accepts:
+- Accepts:
   - NONE
-* Returns:
+- Returns:
   - mStatus
   - mData: [mId, mTitle, mMessage, mLikes, mDislikes, mDate]
 
 ### GET - /messages/[message_id]
 
 - Ruturns a JSON about the message at id
-- Accepts: message id in url
+- Accepts:
+  - message id in url
 - Returns:
   - mStatus
-  - mData:
-    - mId
-    - mTitle
-    - mMessage
-    - mLikes
-    - mDislikes
-    - mDate
+  - mData: [mId, mTitle, mMessage, mLikes, mDislikes, mDate]
 
 ### POST - /messages
 

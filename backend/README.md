@@ -4,9 +4,9 @@
 
 > Add the following keywords to the end of the website url to make request. Request type is specified at each bullet point.
 
-- GET - /messages
+### GET - /messages
 
-  - Returns a JSON listing of all messages in Database.
+  * Returns a JSON listing of all messages in Database.
   - Accepts:
     - NONE
   - Returns:
@@ -19,7 +19,7 @@
       - mDislikes
       - mDate
 
-- GET - /messages/[message_id]
+### GET - /messages/[message_id]
 
   - Ruturns a JSON about the message at id
   - Accepts: message id in url
@@ -33,7 +33,7 @@
       - mDislikes
       - mDate
 
-- POST - /messages
+### POST - /messages
   - This should accept a JSON body and create a new message rowdata in the Database.
   - Accepts: message info in body
     - mTitle

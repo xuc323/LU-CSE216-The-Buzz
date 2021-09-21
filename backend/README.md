@@ -14,8 +14,19 @@
 
 #### _Returns_:
 
-- mStatus
-- mData: [mId, mTitle, mMessage, mLikes, mDislikes, mDate]
+```json
+{
+  "mStatus": "STATUS_CODE",
+  "mData": {
+    "mId": "MESSAGE_ID",
+    "mTitle": "MESSAGE_TITLE",
+    "mMessage": "MESSAGE_CONTENT",
+    "mLikes": "NUMBER_LIKES",
+    "mDislikes": "NUMBER_DISLIKES",
+    "mDate": "DATE_CREATED"
+  }
+}
+```
 
 ### **GET - /messages/[message_id]**
 
@@ -27,8 +38,19 @@
 
 #### _Returns_:
 
-- mStatus
-- mData: [mId, mTitle, mMessage, mLikes, mDislikes, mDate]
+```json
+{
+  "mStatus": "STATUS_CODE",
+  "mData": {
+    "mId": "MESSAGE_ID",
+    "mTitle": "MESSAGE_TITLE",
+    "mMessage": "MESSAGE_CONTENT",
+    "mLikes": "NUMBER_LIKES",
+    "mDislikes": "NUMBER_DISLIKES",
+    "mDate": "DATE_CREATED"
+  }
+}
+```
 
 ### **POST - /messages**
 

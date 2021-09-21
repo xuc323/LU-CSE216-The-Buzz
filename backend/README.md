@@ -1,4 +1,4 @@
-# backend
+# **BACKEND**
 
 ## REST API
 
@@ -17,16 +17,20 @@
 ```json
 {
   "mStatus": "STATUS_CODE",
-  "mData": {
-    "mId": "MESSAGE_ID",
-    "mTitle": "MESSAGE_TITLE",
-    "mMessage": "MESSAGE_CONTENT",
-    "mLikes": "NUMBER_LIKES",
-    "mDislikes": "NUMBER_DISLIKES",
-    "mDate": "DATE_CREATED"
-  }
+  "mData": [
+    {
+      "mId": "MESSAGE_ID",
+      "mTitle": "MESSAGE_TITLE",
+      "mMessage": "MESSAGE_CONTENT",
+      "mLikes": "NUMBER_LIKES",
+      "mDislikes": "NUMBER_DISLIKES",
+      "mDate": "DATE_CREATED"
+    }
+  ]
 }
 ```
+
+**Note:** `mData` is an array.
 
 ### **GET - /messages/[message_id]**
 
@@ -34,7 +38,7 @@
 
 #### _Accepts_:
 
-- message id in url
+- message_id in url
 
 #### _Returns_:
 
@@ -58,13 +62,21 @@
 
 #### _Accepts_: message info in body
 
-- mTitle
-- mMessage
+```json
+{
+  "mTitle": "MESSAGE_TITLE",
+  "mMessage": "MESSAGE_CONTENT"
+}
+```
 
 #### _Returns_:
 
-- mStatus
-- mMessage
+```json
+{
+  "mStatus": "STATUS_CODE",
+  "mMessage": "DATABASE_MESSAGE"
+}
+```
 
 ---
 

@@ -17,4 +17,11 @@ public class SimpleRequest {
      * The message being provided by the client.
      */
     public String mMessage;
+
+    /**
+     * 
+     */
+    public int mLikes;
+
+    public int mDislikes;
 }

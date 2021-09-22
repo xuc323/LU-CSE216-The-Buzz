@@ -79,8 +79,8 @@ public class App {
         // ":id" isn't a number, Spark will reply with a status 500 Internal
         // Server Error. Otherwise, we have an integer, and the only possible
         // error is that it doesn't correspond to a row with data.
-        Spark.get("/messages/:id", (request, response) -> {
-            int idx = Integer.parseInt(request.params("id"));
+        Spark.get("/messages/:m_id", (request, response) -> {
+            int idx = Integer.parseInt(request.params("m_id"));
             // ensure status 200 OK, with a MIME type of JSON
             response.status(200);
             response.type("application/json");
@@ -112,6 +112,26 @@ public class App {
             } else {
                 return gson.toJson(new StructuredResponse("ok", "" + newId, null));
             }
+        });
+
+        Spark.put("messages/:m_id", (request, response) -> {
+            int idx = Integer.parseInt(request.params("m_id"));
+            SimpleRequest req = gson.fromJson(request.body(), SimpleRequest.class);
+
+            response.status(200);
+            response.type("application/json");
+            Database.RowData data = db.selectOne(idx);
+            if (data == null) {
+                return gson.toJson(new StructuredResponse("error", idx + " not found", null));
+            } else {
+                int newId = db.updateOneLikes(idx, data.mLikes);
+                if (newId == -1) {
+                    return gson.toJson(new StructuredResponse("error", "error performing updates", null));
+                } else {
+                    return gson.toJson(new StructuredResponse("ok", "", null));
+                }
+            }
+
         });
 
         // PUT route for updating a row in the DataStore. This is almost

@@ -16,7 +16,7 @@
 
 ```json
 {
-  "mStatus": "STATUS_CODE",
+  "mStatus": "ok",
   "mData": [
     {
       "mId": "MESSAGE_ID",
@@ -38,13 +38,13 @@
 
 #### _Accepts_:
 
-- message_id in url
+- `message_id` in url
 
 #### _Returns_:
 
 ```json
 {
-  "mStatus": "STATUS_CODE",
+  "mStatus": "ok",
   "mData": {
     "mId": "MESSAGE_ID",
     "mTitle": "MESSAGE_TITLE",
@@ -53,6 +53,13 @@
     "mDislikes": "NUMBER_DISLIKES",
     "mDate": "DATE_CREATED"
   }
+}
+```
+
+```json
+{
+  "mStatus": "error",
+  "mMessage": "ID not found"
 }
 ```
 

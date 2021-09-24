@@ -85,6 +85,28 @@
 }
 ```
 
+### **PUT - /messages[message_id]**
+
+- This should accept a JSON body contains both likes and dislikes and increments the one with 1.
+
+#### _Accepts_:
+
+```json
+{
+  "mLikes": 1,
+  "mDislikes": 0
+}
+```
+
+#### _Returns_:
+
+```json
+{
+  "mStatus": "STATUS_CODE",
+  "mMessage": "DATABASE_MESSAGE"
+}
+```
+
 ---
 
 ## Setup

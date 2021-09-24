@@ -114,6 +114,8 @@ public class App {
             }
         });
 
+        // PUT route for liking and disliking the post. This will read id from the url
+        // and the body from the request
         Spark.put("messages/:m_id", (request, response) -> {
             int idx = Integer.parseInt(request.params("m_id"));
             SimpleRequest req = gson.fromJson(request.body(), SimpleRequest.class);
@@ -124,11 +126,33 @@ public class App {
             if (data == null) {
                 return gson.toJson(new StructuredResponse("error", idx + " not found", null));
             } else {
-                int newId = db.updateOneLikes(idx, data.mLikes);
+                int newId = -1;
+                // TODO: check for likes and dislikes and call the right function in database
+                if (req.mLikes == 1) {
+                    if (req.mDislikes == 1) {
+                        // error because trying to update both
+                        return gson
+                                .toJson(new StructuredResponse("error", "cannot update both likes and dislikes", null));
+
+                    } else {
+                        // only update likes
+                        newId = db.updateOneLikes(idx, data.mLikes);
+                    }
+                } else {
+                    if (req.mDislikes == 1) {
+                        // only update dislikes
+                        newId = db.updateOneDislikes(idx, data.mDislikes);
+                    } else {
+                        // error because trying to update both
+                        return gson
+                                .toJson(new StructuredResponse("error", "cannot update both likes and dislikes", null));
+                    }
+                }
+                // check if the update is performed correctly
                 if (newId == -1) {
                     return gson.toJson(new StructuredResponse("error", "error performing updates", null));
                 } else {
-                    return gson.toJson(new StructuredResponse("ok", "", null));
+                    return gson.toJson(new StructuredResponse("ok", "" + newId, null));
                 }
             }
 

@@ -43,8 +43,15 @@ public class Database {
      */
     private PreparedStatement mUpdateOne;
 
+    /**
+     * A prepared statement for updating likes in the database
+     */
     private PreparedStatement mUpdateOneLikes;
 
+    /**
+     * A prepared statement for updating dislikes in the database
+     */
+    private PreparedStatement mUpdateOneDislikes;
     /**
      * A prepared statement for creating the table in our database
      */
@@ -182,6 +189,7 @@ public class Database {
             db.mSelectOne = db.mConnection.prepareStatement("SELECT * from tblData WHERE id=?");
             db.mUpdateOne = db.mConnection.prepareStatement("UPDATE tblData SET message = ? WHERE id = ?");
             db.mUpdateOneLikes = db.mConnection.prepareStatement("UPDATE tblData SET likes = ? WHERE id = ?");
+            db.mUpdateOneDislikes = db.mConnection.prepareStatement("UPDATE tblData SET dislikes = ? WHERE id = ?");
         } catch (SQLException e) {
             System.err.println("Error creating prepared statement");
             e.printStackTrace();
@@ -323,6 +331,18 @@ public class Database {
             mUpdateOneLikes.setInt(1, (likes + 1));
             mUpdateOneLikes.setInt(2, id);
             res = mUpdateOneLikes.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
+
+    int updateOneDislikes(int id, int dislikes) {
+        int res = -1;
+        try {
+            mUpdateOneDislikes.setInt(1, (dislikes + 1));
+            mUpdateOneDislikes.setInt(2, id);
+            res = mUpdateOneDislikes.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }

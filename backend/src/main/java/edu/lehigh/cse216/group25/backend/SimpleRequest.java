@@ -19,9 +19,13 @@ public class SimpleRequest {
     public String mMessage;
 
     /**
-     * 
+     * The indicator of likes. If not 0, then increment like count in database.
      */
     public int mLikes;
 
+    /**
+     * The indicator of dislikes. If not 0, then increment dislike count in
+     * database.
+     */
     public int mDislikes;
 }

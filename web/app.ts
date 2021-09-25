@@ -120,6 +120,9 @@ class ElementList {
     $(".delbtn").click(mainList.clickDelete);
     // Find all of the Edit buttons, and set their behavior
     $(".editbtn").click(mainList.clickEdit);
+    //like/ dislike buttons 
+    $(".likebtn").click(mainList.clickLike);
+    $(".dislikebtn").click(mainList.clickDislike);
   }
 
   /**
@@ -143,22 +146,46 @@ class ElementList {
    * clickEdit is the code we run in response to a click of a delete button
    */
   private clickEdit() {
-    // as in clickDelete, we need the ID of the row
     let id = $(this).data("value");
     $.ajax({
-      type: "GET",
+      type: "Put",
       url: "/messages/" + id,
       dataType: "json",
       success: editEntryForm.init,
     });
   }
-
+  /**
+   * like and dislike click button
+   */
+   private clickLike() {
+    let id = $(this).data("value");
+    $.ajax({
+      type: "Put",
+      url: "/messages/" + id,
+      dataType: "json",
+      data: JSON.stringify({"mLikes": 1, "mDislikes": 0})
+      success: mainList.refresh,
+    });
+  }
+  private clickDislike() {
+    // as in clickDelete, we need the ID of the row
+    let id = $(this).data("value");
+    $.ajax({
+      type: "Put",
+      url: "/messages/" + id,
+      dataType: "json",
+      data: JSON.stringify({"mLikes": 0, "mDislikes": 1})
+      success: mainList.refresh,
+    });
+  }
   /**
    * buttons() adds a 'delete' button and an 'edit' button to the HTML for each
    * row
    */
   private buttons(id: string): string {
     return (
+      "<td><button class ='likebtn' data-value='"+id+"'>Edit</button></td>"+
+      "<td><button class ='dislikebtn' data-value='"+id+"'>Edit</button></td>"+
       "<td><button class='editbtn' data-value='" +
       id +
       "'>Edit</button></td>" +

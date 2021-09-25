@@ -7,6 +7,7 @@ import spark.Spark;
 // Import Google's JSON library
 import com.google.gson.*;
 
+// Import map to get env variables
 import java.util.Map;
 
 /**
@@ -74,9 +75,9 @@ public class App {
         });
 
         // GET route that returns everything for a single row in the DataStore.
-        // The ":id" suffix in the first parameter to get() becomes
-        // request.params("id"), so that we can get the requested row ID. If
-        // ":id" isn't a number, Spark will reply with a status 500 Internal
+        // The ":m_id" suffix in the first parameter to get() becomes
+        // request.params("m_id"), so that we can get the requested row ID. If
+        // ":m_id" isn't a number, Spark will reply with a status 500 Internal
         // Server Error. Otherwise, we have an integer, and the only possible
         // error is that it doesn't correspond to a row with data.
         Spark.get("/messages/:m_id", (request, response) -> {
@@ -106,28 +107,34 @@ public class App {
             response.status(200);
             response.type("application/json");
             // NB: createEntry checks for null title and message
-            int newId = db.insertRow(req.mTitle, req.mMessage);
-            if (newId == -1) {
+            int status = db.insertRow(req.mTitle, req.mMessage);
+            if (status == 0) {
                 return gson.toJson(new StructuredResponse("error", "error performing insertion", null));
             } else {
-                return gson.toJson(new StructuredResponse("ok", "" + newId, null));
+                return gson.toJson(new StructuredResponse("ok", "" + status, null));
             }
         });
 
-        // PUT route for liking and disliking the post. This will read id from the url
-        // and the body from the request
+        // PUT route for liking and disliking the post. This will read m_id from the url
+        // and the JSON body from the request, turn it into a SimpleRequest object,
+        // extract the likes and dislikes, look for the id in database and increment
+        // like and dislike counts
         Spark.put("messages/:m_id", (request, response) -> {
+            // parse the m_id attribute from the url
             int idx = Integer.parseInt(request.params("m_id"));
+            // NB: if gson.Json fails, Spark will reply with status 500 Internal
+            // Server Error
             SimpleRequest req = gson.fromJson(request.body(), SimpleRequest.class);
 
             response.status(200);
             response.type("application/json");
+            // getting the message from database based on index
             Database.RowData data = db.selectOne(idx);
             if (data == null) {
+                // if the message is not yet in the database
                 return gson.toJson(new StructuredResponse("error", idx + " not found", null));
             } else {
-                int newId = -1;
-                // TODO: check for likes and dislikes and call the right function in database
+                int status = -1; // initialize to -1, if not modified will indicate error
                 if (req.mLikes == 1) {
                     if (req.mDislikes == 1) {
                         // error because trying to update both
@@ -135,24 +142,24 @@ public class App {
                                 .toJson(new StructuredResponse("error", "cannot update both likes and dislikes", null));
 
                     } else {
-                        // only update likes
-                        newId = db.updateOneLikes(idx, data.mLikes);
+                        // only update likes, update the status
+                        status = db.updateOneLikes(idx, data.mLikes);
                     }
                 } else {
                     if (req.mDislikes == 1) {
-                        // only update dislikes
-                        newId = db.updateOneDislikes(idx, data.mDislikes);
+                        // only update dislikes, update the status
+                        status = db.updateOneDislikes(idx, data.mDislikes);
                     } else {
-                        // error because trying to update both
-                        return gson
-                                .toJson(new StructuredResponse("error", "cannot update both likes and dislikes", null));
+                        // error because both won't update
+                        return gson.toJson(
+                                new StructuredResponse("error", "need to update at least one likes or dislikes", null));
                     }
                 }
                 // check if the update is performed correctly
-                if (newId == -1) {
+                if (status == -1) {
                     return gson.toJson(new StructuredResponse("error", "error performing updates", null));
                 } else {
-                    return gson.toJson(new StructuredResponse("ok", "" + newId, null));
+                    return gson.toJson(new StructuredResponse("ok", "" + status, null));
                 }
             }
 

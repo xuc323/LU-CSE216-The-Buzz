@@ -111,7 +111,7 @@ class ElementList {
         "<tr><td>" +
           data.mData[i].mTitle + 
           "</td>" + 
-          "<p>" + data.mData[i].mMessage + "</p>" +
+          "<td>" + data.mData[i].mMessage + "</td>" +
           mainList.buttons(data.mData[i].mId,data.mData[i].mLikes,data.mData[i].mDislikes) +
           "</tr>"
       );

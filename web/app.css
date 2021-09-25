@@ -45,7 +45,7 @@ tr {
 
 /* make the first column of the table wide */
 td:first-child {
-  width: 75%;
+  width: 50%;
 }
 
 /* make the form elements wide, and force a line break after each */

@@ -109,9 +109,9 @@ class ElementList {
     for (let i = 0; i < data.mData.length; ++i) {
       $("#messageList").append(
         "<tr><td>" +
-          data.mData[i].mTitle +
+          data.mData[i].mTitle + 
           "</td>" +
-          mainList.buttons(data.mData[i].mId) +
+          mainList.buttons(data.mData[i].mId,data.mData[i].Likes,data.mData[i].mDislikes) +
           "</tr>"
       );
     }
@@ -163,7 +163,7 @@ class ElementList {
       type: "Put",
       url: "/messages/" + id,
       dataType: "json",
-      data: JSON.stringify({"mLikes": 1, "mDislikes": 0})
+      data: JSON.stringify({"mLikes": 1, "mDislikes": 0}),
       success: mainList.refresh,
     });
   }
@@ -174,7 +174,7 @@ class ElementList {
       type: "Put",
       url: "/messages/" + id,
       dataType: "json",
-      data: JSON.stringify({"mLikes": 0, "mDislikes": 1})
+      data: JSON.stringify({"mLikes": 0, "mDislikes": 1}),
       success: mainList.refresh,
     });
   }
@@ -182,10 +182,10 @@ class ElementList {
    * buttons() adds a 'delete' button and an 'edit' button to the HTML for each
    * row
    */
-  private buttons(id: string): string {
+  private buttons(id: string, likes: string, dislikes: string ): string {
     return (
-      "<td><button class ='likebtn' data-value='"+id+"'>Edit</button></td>"+
-      "<td><button class ='dislikebtn' data-value='"+id+"'>Edit</button></td>"+
+      "<td><button class ='likebtn' data-value='"+id+"'>Like "+likes+"</button></td>"+
+      "<td><button class ='dislikebtn' data-value='"+id+"'>Dislike "+dislikes+"</button></td>"+
       "<td><button class='editbtn' data-value='" +
       id +
       "'>Edit</button></td>" +

@@ -110,8 +110,8 @@ class ElementList {
       $("#messageList").append(
         "<tr><td>" +
           data.mData[i].mTitle + 
-          "</td>" +
-          mainList.buttons(data.mData[i].mId,data.mData[i].Likes,data.mData[i].mDislikes) +
+          "</td>" + data.mData[i].mMessage+
+          mainList.buttons(data.mData[i].mId,data.mData[i].mLikes,data.mData[i].mDislikes) +
           "</tr>"
       );
     }

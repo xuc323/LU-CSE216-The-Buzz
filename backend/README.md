@@ -85,7 +85,7 @@
 }
 ```
 
-### **PUT - /messages[message_id]**
+### **PUT - /messages/[message_id]**
 
 - This should accept a JSON body contains both likes and dislikes and increments the one with 1.
 

@@ -16,7 +16,7 @@ Heroku allows our team to launch our app on the Heroku server where the web inte
       <version>3.0.4</version>
     </dependency>
 ```
-5. With Heroku as a dependency and the .jar file is running, we want Heroku to use it so I added the following code as a plugins:
+5. With Heroku as a dependency and the .jar file is running, we want Heroku to use it so I added the following code as plugins:
 ```
 <plugin>
   <groupId>com.heroku.sdk</groupId>
@@ -52,7 +52,10 @@ Heroku allows our team to launch our app on the Heroku server where the web inte
     </configuration>
 </plugin>
 ```
-6. Also changed the web tag in the pom.xml to refer to java -jar ./target/backend-1.0-SNAPSHOT-jar-with-dependencies.jar
+6. Also changed the web tag in the pom.xml to refer to: 
+```
+java -jar ./target/backend-1.0-SNAPSHOT-jar-with-dependencies.jar
+```
 7. In the Heroku dashboard, I added on the "Heroku Postgres" and stayed on the "Hobby Dev" tier to start the database.
 8. In the settings of Heroku, I went to "Reveal Config Vars" to get the database url and inserted the following lines into the main method of App.java:
 ```

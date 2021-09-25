@@ -1,5 +1,4 @@
 import * as React from 'react'
-import * as ReactDOM from 'react-dom';
 
 type PostState = { name: string };
 
@@ -8,21 +7,20 @@ type PostState = { name: string };
  * value
  */
 type PostProps = {
-    getNum: () => number;
     setNum: (num: number) => void;
-    getDis: () => number;
     setDis: (num: number) => void;
 }
 var dis = 0;
+var like = 0;
 
 export class Post extends React.Component<PostProps, PostState> {
     
     increment = (_e: React.MouseEvent<HTMLButtonElement>) => {
-        this.props.setNum(1 + this.props.getNum());
+        this.props.setNum(like++);
     }
     
     increment_dislike = (_e: React.MouseEvent<HTMLButtonElement>) => {
-        this.props.setDis(1 + this.props.getDis());
+        this.props.setDis(dis++);
     }
     /** State will consist of a single string */
     state = { name: "" }
@@ -45,10 +43,10 @@ export class Post extends React.Component<PostProps, PostState> {
                 
                 <input type="text" onChange={this.handleChange} value={this.state.name} />
                 <button onClick={this.increment}> Like
-                    <span>{" "+this.props.getNum()}</span>
+                    <span>{" "+like}</span>
                 </button>
                 <button onClick={this.increment_dislike}> Dislike
-                    <span>{" "+this.props.getDis()}</span>
+                    <span>{" "+dis}</span>
                 </button>
             </div>
             

@@ -62,6 +62,9 @@ public class DatabaseTest extends TestCase {
         int likeCountAfter = db.selectOne(data.mId).mLikes;
         // check if it actually got incremented
         assertTrue((likeCount + 1) == likeCountAfter);
+
+        // close the connection
+        db.disconnect();
     }
 
 }

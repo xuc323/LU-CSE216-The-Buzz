@@ -109,9 +109,12 @@ public class Database {
         /**
          * Construct a RowData object by providing values for its fields
          * 
-         * @param id      The id of the row
-         * @param title   The title/subject of the row
-         * @param message The message of the row
+         * @param id       The id of the row
+         * @param title    The title/subject of the row
+         * @param message  The message of the row
+         * @param likes    The like counts of the row
+         * @param dislikes The dislike counts of the row
+         * @param date     The date created
          */
         public RowData(int id, String title, String message, int likes, int dislikes, Date date) {
             mId = id;
@@ -176,7 +179,7 @@ public class Database {
 
             // Note: no "IF NOT EXISTS" or "IF EXISTS" checks on table
             // creation/deletion, so multiple executions will cause an exception
-            // TODO: change the SQL syntax
+            // TODO: change the SQL syntax so it will be able to modify 3 tables
             db.mCreateTable = db.mConnection.prepareStatement(
                     "CREATE TABLE tblData (id SERIAL PRIMARY KEY, title VARCHAR(50) NOT NULL, message VARCHAR(500) NOT NULL, likes INT NOT NULL, dislikes INT NOT NULL, date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP)");
             db.mDropTable = db.mConnection.prepareStatement("DROP TABLE tblData");
@@ -254,6 +257,7 @@ public class Database {
         try {
             ResultSet rs = mSelectAll.executeQuery();
             while (rs.next()) {
+                // create new RowData instance and insert it into ArrayList
                 res.add(new RowData(rs.getInt("id"), rs.getString("title"), rs.getString("message"), rs.getInt("likes"),
                         rs.getInt("dislikes"), rs.getDate("date")));
             }
@@ -278,6 +282,7 @@ public class Database {
             mSelectOne.setInt(1, id);
             ResultSet rs = mSelectOne.executeQuery();
             if (rs.next()) {
+                // create new RowData instance and insert it into ArrayList
                 res = new RowData(rs.getInt("id"), rs.getString("title"), rs.getString("message"), rs.getInt("likes"),
                         rs.getInt("dislikes"), rs.getDate("date"));
             }
@@ -325,6 +330,13 @@ public class Database {
         return res;
     }
 
+    /**
+     * Increment the like count for the row at id in the database
+     * 
+     * @param id    The id of the row to update
+     * @param likes The original like count
+     * @return The number of rows that were updated. -1 indicates an error.
+     */
     int updateOneLikes(int id, int likes) {
         int res = -1;
         try {
@@ -337,6 +349,13 @@ public class Database {
         return res;
     }
 
+    /**
+     * Increment the dislike count for the row at id in the database
+     * 
+     * @param id       The id of the row to update
+     * @param dislikes The original dislike count
+     * @return The number of rows that were updated. -1 indicates an error.
+     */
     int updateOneDislikes(int id, int dislikes) {
         int res = -1;
         try {

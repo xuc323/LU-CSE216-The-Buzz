@@ -110,3 +110,15 @@
 ---
 
 ## Setup
+
+```zsh
+// clean and package the backend code
+% cd backend
+% DATABASE_URL=`DATABASE_URL` mvn clean package
+
+// run locally
+% DATABASE_URL=`DATABASE_URL` mvn exec:java
+
+// deploy to Heroku
+% DATABASE_URL=`DATABASE_URL` mvn heroku:deploy
+```

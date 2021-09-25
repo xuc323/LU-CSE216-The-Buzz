@@ -6,10 +6,7 @@ This README documents the deployment of Heroku, "The Buzz" UI/how to use it, and
 Heroku allows our team to launch our app on the Heroku server where the web interface is hosted by Heroku and the Android app can reach it.
 
 1) Install the Heroku ClI and create an account.
-
-
-and call this code in main() of App.java
-Spark.port(getIntFromEnv("PORT", 4567));
+2) In the Heroku dashboard, I created our app and named it "the-buzz-group25".
 
 ### Documentation of "The Buzz" UI ###
 

@@ -59,7 +59,7 @@ java -jar ./target/backend-1.0-SNAPSHOT-jar-with-dependencies.jar
 7. In the Heroku dashboard, I added on the "Heroku Postgres" and stayed on the "Hobby Dev" tier to start the database.
 8. In the settings of Heroku, I went to "Reveal Config Vars" to get the database url and inserted the following lines into the main method of App.java:
 ```
-String db_url = env.get("postgres://pkdkdvttlfzyfu:6368fa21b4ffd5891b25a4700c6ee3e85350bec637fd33aabd57879c6b97efe1@ec2-3-225-204-194.compute-1.amazonaws.com:5432/d7oeuj2oslhi4l");
+String db_url = env.get("DATABASE_URL from Heroku");
 // Give the Database object a connection, fail if we cannot get one
 try {
     Class.forName("org.postgresql.Driver");

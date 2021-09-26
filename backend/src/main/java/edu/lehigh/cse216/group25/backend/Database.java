@@ -309,7 +309,7 @@ public class Database {
         int res = -1;
         try {
             mDeleteOne.setInt(1, id);
-            res = mDeleteOne.executeUpdate();
+            res += mDeleteOne.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }

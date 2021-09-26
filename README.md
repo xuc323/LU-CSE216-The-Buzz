@@ -88,5 +88,6 @@ try {
 9. Finally, I ran mvn package; mvn heroku:deploy which allowed developers to connect to it.
 
 ### Documentation of "The Buzz" UI ###
+Image of our plan/sketch of our finite state machine is included in the "Downloads" section of the repository. The FSM concerns the actions associated with user voting (down-vote/up-vote/no interaction). 
 
 ### Information on the use of "The Buzz" & APIs ###

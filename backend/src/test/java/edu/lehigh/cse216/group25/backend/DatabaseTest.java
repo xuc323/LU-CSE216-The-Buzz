@@ -28,7 +28,6 @@ public class DatabaseTest {
     }
 
     @Test
-    @Order(1)
     public void testInsertion() {
         // preparing title and message to insert
         String title = "Test Title1";
@@ -45,6 +44,12 @@ public class DatabaseTest {
         // check if we get all messages (must be something because insertion is right
         // before)
         assertTrue(dataList != null);
+    }
+
+    @Test
+    public void testSelectOne() {
+        Database.RowData data = db.selectOne(idx);
+        assertTrue(data != null);
     }
 
     @Test
@@ -73,14 +78,10 @@ public class DatabaseTest {
         assertTrue((dislikeCount + 1) == dislikeCountAfter);
     }
 
-    @Test
-    public void testDeletion() {
-        int status = db.deleteRow(idx);
-        assertTrue(status != -1);
-    }
-
     @AfterAll
-    public void cleanUp() {
+    public void testCleanUp() {
+        int delStatus = db.deleteRow(idx);
+        assertTrue(delStatus != -1);
         // close the connection
         boolean status = db.disconnect();
         assertTrue(status);

@@ -87,16 +87,49 @@
 
 ### **PUT - /messages/[message_id]**
 
-- This should accept a JSON body contains both likes and dislikes and increments the one with 1.
+- This should accept a JSON body contains the new message, then change the message at `message_id`.
 
 #### _Accepts_:
 
 ```json
 {
-  "mLikes": 1,
-  "mDislikes": 0
+  "mMessage": "NEW_MESSAGE"
 }
 ```
+
+#### _Returns_:
+
+```json
+{
+  "mStatus": "STATUS_CODE",
+  "mMessage": "DATABASE_MESSAGE"
+}
+```
+
+### **PUT - /messages/[message_id]/like**
+
+- This will increment the like count at `message_id` by 1.
+
+#### _Accepts_:
+
+- None
+
+#### _Returns_:
+
+```json
+{
+  "mStatus": "STATUS_CODE",
+  "mMessage": "DATABASE_MESSAGE"
+}
+```
+
+### **PUT - /messages/[message_id]/dislike**
+
+- This will increment the dislike count at `message_id` by 1.
+
+#### _Accepts_:
+
+- None
 
 #### _Returns_:
 

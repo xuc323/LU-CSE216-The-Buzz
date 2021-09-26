@@ -116,9 +116,7 @@ public class App {
         });
 
         // PUT route for liking and disliking the post. This will read m_id from the url
-        // and the JSON body from the request, turn it into a SimpleRequest object,
-        // extract the likes and dislikes, look for the id in database and increment
-        // like and dislike counts
+        // and look for the id in database and increment like counts
         Spark.put("messages/:m_id/like", (request, response) -> {
             // parse the m_id attribute from the url
             int idx = Integer.parseInt(request.params("m_id"));
@@ -140,9 +138,7 @@ public class App {
         });
 
         // PUT route for liking and disliking the post. This will read m_id from the url
-        // and the JSON body from the request, turn it into a SimpleRequest object,
-        // extract the likes and dislikes, look for the id in database and increment
-        // like and dislike counts
+        // and look for the id in database and increment dislike counts
         Spark.put("messages/:m_id/dislike", (request, response) -> {
             // parse the m_id attribute from the url
             int idx = Integer.parseInt(request.params("m_id"));
@@ -164,7 +160,8 @@ public class App {
         });
 
         // PUT route for updating a row in the DataStore. This is almost
-        // exactly the same as POST
+        // exactly the same as POST. Takes the m_id from url and look for the index in
+        // database
         Spark.put("/messages/:m_id", (request, response) -> {
             // If we can't get an ID or can't parse the JSON, Spark will send
             // a status 500
@@ -177,7 +174,7 @@ public class App {
             if (result == -1) {
                 return gson.toJson(new StructuredResponse("error", "unable to update row " + idx, null));
             } else {
-                return gson.toJson(new StructuredResponse("ok", null, result));
+                return gson.toJson(new StructuredResponse("ok", "" + result, null));
             }
         });
 
@@ -194,7 +191,7 @@ public class App {
             if (result == -1) {
                 return gson.toJson(new StructuredResponse("error", "unable to delete row " + idx, null));
             } else {
-                return gson.toJson(new StructuredResponse("ok", null, null));
+                return gson.toJson(new StructuredResponse("ok", "" + result, null));
             }
         });
 

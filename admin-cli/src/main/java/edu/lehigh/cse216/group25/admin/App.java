@@ -3,10 +3,10 @@ package edu.lehigh.cse216.group25.admin;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.IOException;
-
+import spark.Spark;
 import java.util.ArrayList;
 import java.util.Map;
-
+import com.google.gson.*;
 /**
  * App is our basic admin app. For now, it is a demonstration of the six key
  * operations on a database: connect, insert, update, query, delete, disconnect
@@ -18,8 +18,8 @@ public class App {
      */
     static void menu() {
         System.out.println("Main Menu");
-        System.out.println("  [T] Create tblData");
-        System.out.println("  [D] Drop tblData");
+        System.out.println("  [T] Create table");
+        System.out.println("  [D] Drop table");
         System.out.println("  [1] Query for a specific row");
         System.out.println("  [*] Query for all rows");
         System.out.println("  [-] Delete a row");
@@ -99,6 +99,13 @@ public class App {
         }
         return i;
     }
+    static int getIntFromEnv(String envar, int defaultVal) {
+        ProcessBuilder processBuilder = new ProcessBuilder();
+        if (processBuilder.environment().get(envar) != null) {
+            return Integer.parseInt(processBuilder.environment().get(envar));
+        }
+        return defaultVal;
+    }
 
     /**
      * The main routine runs a loop that gets a request from the user and processes
@@ -107,6 +114,8 @@ public class App {
      * @param argv Command-line options. Ignored by this program.
      */
     public static void main(String[] argv) {
+        // Get the port on which to listen for requests
+        Spark.port(getIntFromEnv("PORT", 4567));
         // get the Postgres configuration from the environment
         Map<String, String> env = System.getenv();
         String ip = env.get("POSTGRES_IP");
@@ -133,20 +142,24 @@ public class App {
             } else if (action == 'q') {
                 break;
             } else if (action == 'T') {
-                db.createTable();
+                String tblName = getString(in, "Enter the table name: ");
+                db.createTable(tblName);
             } else if (action == 'D') {
-                db.dropTable();
+                String tblName = getString(in, "Enter the table name: ");
+                db.dropTable(tblName);
             } else if (action == '1') {
+                String tblName = getString(in, "Enter the table name: ");
                 int id = getInt(in, "Enter the row ID");
                 if (id == -1)
                     continue;
-                Database.RowData res = db.selectOne(id);
+                Database.RowData res = db.selectOne(tblName, id);
                 if (res != null) {
                     System.out.println("  [" + res.mId + "] " + res.mSubject);
                     System.out.println("  --> " + res.mMessage);
                 }
             } else if (action == '*') {
-                ArrayList<Database.RowData> res = db.selectAll();
+                String tblName = getString(in, "Enter the table name: ");
+                ArrayList<Database.RowData> res = db.selectAll(tblName);
                 if (res == null)
                     continue;
                 System.out.println("  Current Database Contents");
@@ -155,26 +168,29 @@ public class App {
                     System.out.println("  [" + rd.mId + "] " + rd.mSubject);
                 }
             } else if (action == '-') {
+                String tblName = getString(in, "Enter the table name: ");
                 int id = getInt(in, "Enter the row ID");
                 if (id == -1)
                     continue;
-                int res = db.deleteRow(id);
+                int res = db.deleteRow(tblName, id);
                 if (res == -1)
                     continue;
                 System.out.println("  " + res + " rows deleted");
             } else if (action == '+') {
+                String tblName = getString(in, "Enter the table name: ");
                 String subject = getString(in, "Enter the subject");
                 String message = getString(in, "Enter the message");
                 if (subject.equals("") || message.equals(""))
                     continue;
-                int res = db.insertRow(subject, message);
+                int res = db.insertRow(tblName, subject, message);
                 System.out.println(res + " rows added");
             } else if (action == '~') {
+                String tblName = getString(in, "Enter the table name: ");
                 int id = getInt(in, "Enter the row ID :> ");
                 if (id == -1)
                     continue;
                 String newMessage = getString(in, "Enter the new message");
-                int res = db.updateOne(id, newMessage);
+                int res = db.updateOne(tblName, id, newMessage);
                 if (res == -1)
                     continue;
                 System.out.println("  " + res + " rows updated");

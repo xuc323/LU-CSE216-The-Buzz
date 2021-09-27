@@ -131,16 +131,16 @@ public class Database {
             // Note: no "IF NOT EXISTS" or "IF EXISTS" checks on table
             // creation/deletion, so multiple executions will cause an exception
             db.mCreateTable = db.mConnection
-                    .prepareStatement("CREATE TABLE tblData (id SERIAL PRIMARY KEY, subject VARCHAR(50) "
+                    .prepareStatement("CREATE TABLE ? (id SERIAL PRIMARY KEY, subject VARCHAR(50) "
                             + "NOT NULL, message VARCHAR(500) NOT NULL)");
-            db.mDropTable = db.mConnection.prepareStatement("DROP TABLE tblData");
+            db.mDropTable = db.mConnection.prepareStatement("DROP TABLE ?");
 
             // Standard CRUD operations
-            db.mDeleteOne = db.mConnection.prepareStatement("DELETE FROM tblData WHERE id = ?");
-            db.mInsertOne = db.mConnection.prepareStatement("INSERT INTO tblData VALUES (default, ?, ?)");
-            db.mSelectAll = db.mConnection.prepareStatement("SELECT id, subject FROM tblData");
-            db.mSelectOne = db.mConnection.prepareStatement("SELECT * from tblData WHERE id=?");
-            db.mUpdateOne = db.mConnection.prepareStatement("UPDATE tblData SET message = ? WHERE id = ?");
+            db.mDeleteOne = db.mConnection.prepareStatement("DELETE FROM ? WHERE id = ?");
+            db.mInsertOne = db.mConnection.prepareStatement("INSERT INTO ? VALUES (default, ?, ?)");
+            db.mSelectAll = db.mConnection.prepareStatement("SELECT id, subject FROM ?");
+            db.mSelectOne = db.mConnection.prepareStatement("SELECT * from ? WHERE id=?");
+            db.mUpdateOne = db.mConnection.prepareStatement("UPDATE ? SET message = ? WHERE id = ?");
         } catch (SQLException e) {
             System.err.println("Error creating prepared statement");
             e.printStackTrace();
@@ -183,11 +183,12 @@ public class Database {
      * 
      * @return The number of rows that were inserted
      */
-    int insertRow(String subject, String message) {
+    int insertRow(String tblName, String subject, String message) {
         int count = 0;
         try {
-            mInsertOne.setString(1, subject);
-            mInsertOne.setString(2, message);
+            mInsertOne.setString(1, tblName);
+            mInsertOne.setString(2, subject);
+            mInsertOne.setString(3, message);
             count += mInsertOne.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -200,7 +201,8 @@ public class Database {
      * 
      * @return All rows, as an ArrayList
      */
-    ArrayList<RowData> selectAll() {
+    ArrayList<RowData> selectAll(String tblName) throws SQLException{
+        mSelectAll.setString(1, tblName);
         ArrayList<RowData> res = new ArrayList<RowData>();
         try {
             ResultSet rs = mSelectAll.executeQuery();
@@ -222,10 +224,11 @@ public class Database {
      * 
      * @return The data for the requested row, or null if the ID was invalid
      */
-    RowData selectOne(int id) {
+    RowData selectOne(String tblName, int id) {
         RowData res = null;
         try {
-            mSelectOne.setInt(1, id);
+            mSelectOne.setString(1, tblName);
+            mSelectOne.setInt(2, id);
             ResultSet rs = mSelectOne.executeQuery();
             if (rs.next()) {
                 res = new RowData(rs.getInt("id"), rs.getString("subject"), rs.getString("message"));
@@ -243,10 +246,11 @@ public class Database {
      * 
      * @return The number of rows that were deleted. -1 indicates an error.
      */
-    int deleteRow(int id) {
+    int deleteRow(String tblName, int id) {
         int res = -1;
         try {
-            mDeleteOne.setInt(1, id);
+            mDeleteOne.setString(1, tblName);
+            mDeleteOne.setInt(2, id);
             res = mDeleteOne.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -262,11 +266,12 @@ public class Database {
      * 
      * @return The number of rows that were updated. -1 indicates an error.
      */
-    int updateOne(int id, String message) {
+    int updateOne(String tblName, int id, String message) {
         int res = -1;
         try {
-            mUpdateOne.setString(1, message);
-            mUpdateOne.setInt(2, id);
+            mUpdateOne.setString(1, tblName);
+            mUpdateOne.setString(2, message);
+            mUpdateOne.setInt(3, id);
             res = mUpdateOne.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -277,8 +282,9 @@ public class Database {
     /**
      * Create tblData. If it already exists, this will print an error
      */
-    void createTable() {
+    void createTable(String tblName) {
         try {
+            mCreateTable.setString(1, tblName);
             mCreateTable.execute();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -289,8 +295,9 @@ public class Database {
      * Remove tblData from the database. If it does not exist, this will print an
      * error.
      */
-    void dropTable() {
+    void dropTable(String tblName) {
         try {
+            mDropTable.setString(1, tblName);
             mDropTable.execute();
         } catch (SQLException e) {
             e.printStackTrace();

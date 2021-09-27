@@ -3,7 +3,7 @@ import './buzz.dart';
 import 'package:english_words/english_words.dart';
 import 'dart:convert';
 
-void main() => runApp(MyApp());
+void main() => runApp(BuzzApp());
 
 class MyApp extends StatelessWidget {
   @override

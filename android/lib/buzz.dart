@@ -1,4 +1,3 @@
-import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'dart:convert';
@@ -15,13 +14,12 @@ class BuzzApp extends StatefulWidget {
 
 class _BuzzAppState extends State<BuzzApp> {
   final url = "https://jsonplaceholder.typicode.com/posts";
-  List<String> _postsJson = [];
+  var _postsJson = [];
 
   void fetchPosts() async {
     try {
-      final response =
-          await get(Uri.parse("https://jsonplaceholder.typicode.com/posts"));
-      final List<String> jsonData = jsonDecode(response.body);
+      final response = await get(Uri.parse(url));
+      final jsonData = jsonDecode(response.body) as List;
 
       setState(() {
         _postsJson = jsonData;
@@ -35,45 +33,25 @@ class _BuzzAppState extends State<BuzzApp> {
     fetchPosts();
   }
 
-  Widget _buildList() {
-    return ListView.builder(
-        padding: const EdgeInsets.all(16.0),
-        itemBuilder: /*1*/ (context, i) {
-          List<String> post = _postsJson;
-          if (i.isOdd) return const Divider(); /*2*/
-
-          return _buildRow(post);
-        });
-  }
-
-  Widget _buildRow(List<String> text) {
-    final alreadySaved = _postsJson.contains(text);
-    return ListTile(
-      title: Text(text[0],
-          style: const TextStyle(fontSize: 18.0, fontWeight: FontWeight.w800)),
-      trailing: Icon(
-          alreadySaved ? Icons.thumb_up : Icons.thumb_up_off_alt_outlined,
-          color: alreadySaved ? Colors.blue[800] : null),
-    );
-  }
-
+  @override
   Widget build(BuildContext context) {
     String stringy = 'Buzz Messaging App';
-    return Scaffold(
+    return MaterialApp(
+      home: Scaffold(
         appBar: AppBar(
           title: Text(stringy,
               style: TextStyle(
                   fontWeight: FontWeight.bold, fontStyle: FontStyle.italic)),
           backgroundColor: Colors.purple[900],
-          actions: <Widget>[
-            IconButton(
-                icon: Icon(Icons.list),
-                onPressed: () {
-                  print("Hello World");
-                })
-          ],
         ),
-        body: _buildList());
+        body: ListView.builder(
+            itemCount: _postsJson.length,
+            itemBuilder: (context, i) {
+              final post = _postsJson[i];
+              return Text("Title: ${post["title"]}\n\n ${post["body"]}\n");
+            }),
+      ),
+    );
   }
 }
 

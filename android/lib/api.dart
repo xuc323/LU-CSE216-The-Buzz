@@ -14,8 +14,7 @@ class API_Manager {
       var jsonString = response.body;
       //var jsonMap = json.decode(jsonString);
       //messageModel = Message.fromJson(jsonMap);
-      final messageModel = MessagefromJson(jsonString);
-      return messageModel;
+      return MessagefromJson(jsonString);
     } catch (Exception) {
       return messageModel;
     }

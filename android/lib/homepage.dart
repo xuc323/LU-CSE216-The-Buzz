@@ -38,7 +38,6 @@ class _HomePageState extends State<HomePage> {
                     var article = snapshot.data!.mData[index];
                     return Container(
                       height: 100,
-                      margin: const EdgeInsets.all(8),
                       child: Row(
                         children: <Widget>[
                           SizedBox(width: 16),
@@ -50,7 +49,7 @@ class _HomePageState extends State<HomePage> {
                                   article.mMessage,
                                   overflow: TextOverflow.ellipsis,
                                   style: TextStyle(
-                                      fontSize: 20,
+                                      fontSize: 15,
                                       fontWeight: FontWeight.bold),
                                 ),
                               ],

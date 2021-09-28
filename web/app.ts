@@ -110,10 +110,9 @@ class ElementList {
       $("#messageList").append(
         "<tr><td>" +
           data.mData[i].mTitle + 
-          "</td>" + 
-          "<td>" + data.mData[i].mMessage + "</td>" +
           mainList.buttons(data.mData[i].mId,data.mData[i].mLikes,data.mData[i].mDislikes) +
-          "</tr>"
+          "</td></tr>"+
+          "<tr><td>Message:   " + data.mData[i].mMessage + "</td></tr>"
       );
     }
     $("#messageList").append("</table>");
@@ -187,12 +186,8 @@ class ElementList {
     return (
       "<td><button class ='likebtn' data-value='"+id+"'>Like "+likes+"</button></td>"+
       "<td><button class ='dislikebtn' data-value='"+id+"'>Dislike "+dislikes+"</button></td>"+
-      "<td><button class='editbtn' data-value='" +
-      id +
-      "'>Edit</button></td>" +
-      "<td><button class='delbtn' data-value='" +
-      id +
-      "'>Delete</button></td>"
+      "<td><button class='editbtn' data-value='" +id+"'>Edit</button></td>" +
+      "<td><button class='delbtn' data-value='"+id+"'>Delete</button></td>"
     );
   }
 } // end class ElementList

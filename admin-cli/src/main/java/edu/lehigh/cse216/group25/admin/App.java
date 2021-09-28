@@ -164,24 +164,20 @@ public class App {
             } else if (action == 'q') {
                 break;
             } else if (action == 'T') {
-                String tblName = getString(in, "Enter the table name: ");
-                db.createTable(tblName);
+                db.createTable();
             } else if (action == 'D') {
-                String tblName = getString(in, "Enter the table name: ");
-                db.dropTable(tblName);
+                db.dropTable();
             } else if (action == '1') {
-                String tblName = getString(in, "Enter the table name: ");
                 int id = getInt(in, "Enter the row ID");
                 if (id == -1)
                     continue;
-                Database.RowData res = db.selectOne(tblName, id);
+                Database.RowData res = db.selectOne(id);
                 if (res != null) {
                     System.out.println("  [" + res.mId + "] " + res.mSubject);
                     System.out.println("  --> " + res.mMessage);
                 }
             } else if (action == '*') {
-                String tblName = getString(in, "Enter the table name: ");
-                ArrayList<Database.RowData> res = db.selectAll(tblName);
+                ArrayList<Database.RowData> res = db.selectAll();
                 if (res == null)
                     continue;
                 System.out.println("  Current Database Contents");
@@ -190,29 +186,26 @@ public class App {
                     System.out.println("  [" + rd.mId + "] " + rd.mSubject);
                 }
             } else if (action == '-') {
-                String tblName = getString(in, "Enter the table name: ");
                 int id = getInt(in, "Enter the row ID");
                 if (id == -1)
                     continue;
-                int res = db.deleteRow(tblName, id);
+                int res = db.deleteRow(id);
                 if (res == -1)
                     continue;
                 System.out.println("  " + res + " rows deleted");
             } else if (action == '+') {
-                String tblName = getString(in, "Enter the table name: ");
                 String subject = getString(in, "Enter the subject");
                 String message = getString(in, "Enter the message");
                 if (subject.equals("") || message.equals(""))
                     continue;
-                int res = db.insertRow(tblName, subject, message);
+                int res = db.insertRow(subject, message);
                 System.out.println(res + " rows added");
             } else if (action == '~') {
-                String tblName = getString(in, "Enter the table name: ");
                 int id = getInt(in, "Enter the row ID :> ");
                 if (id == -1)
                     continue;
                 String newMessage = getString(in, "Enter the new message");
-                int res = db.updateOne(tblName, id, newMessage);
+                int res = db.updateOne(id, newMessage);
                 if (res == -1)
                     continue;
                 System.out.println("  " + res + " rows updated");

@@ -106,7 +106,7 @@ class ElementList {
    */
   private update(data: any) {
     $("#messageList").html("<table>");
-    for (let i = 0; i < data.mData.length; ++i) {
+    for (let i = data.mData.length-1; i >=0; i--) {
       $("#messageList").append(
         "<tr><td>" +
           data.mData[i].mTitle + 
@@ -161,7 +161,7 @@ class ElementList {
     let id = $(this).data("value");
     $.ajax({
       type: "Put",
-      url: "/messages/" + id,
+      url: "/messages/" + id +"/like",
       dataType: "json",
       data: JSON.stringify({"mLikes": 1, "mDislikes": 0}),
       success: mainList.refresh,
@@ -172,7 +172,7 @@ class ElementList {
     let id = $(this).data("value");
     $.ajax({
       type: "Put",
-      url: "/messages/" + id,
+      url: "/messages/" + id +"/dislike",
       dataType: "json",
       data: JSON.stringify({"mLikes": 0, "mDislikes": 1}),
       success: mainList.refresh,

@@ -43,8 +43,8 @@ public class App {
         } else {
             // print out if database is connected successfully
             System.out.println("Postgres database connected!");
+            // db.dropTable();
             // db.createTable();
-
         }
 
         // Set up the location for serving static files. If the STATIC_LOCATION
@@ -116,91 +116,84 @@ public class App {
         });
 
         // PUT route for liking and disliking the post. This will read m_id from the url
-        // and the JSON body from the request, turn it into a SimpleRequest object,
-        // extract the likes and dislikes, look for the id in database and increment
-        // like and dislike counts
-        Spark.put("messages/:m_id", (request, response) -> {
+        // and look for the id in database and increment like counts
+        Spark.put("messages/:m_id/like", (request, response) -> {
             // parse the m_id attribute from the url
             int idx = Integer.parseInt(request.params("m_id"));
             // NB: if gson.Json fails, Spark will reply with status 500 Internal
             // Server Error
-            SimpleRequest req = gson.fromJson(request.body(), SimpleRequest.class);
+            // SimpleRequest req = gson.fromJson(request.body(), SimpleRequest.class);
 
             response.status(200);
             response.type("application/json");
-            // getting the message from database based on index
-            Database.RowData data = db.selectOne(idx);
-            if (data == null) {
-                // if the message is not yet in the database
-                return gson.toJson(new StructuredResponse("error", idx + " not found", null));
+
+            int status = db.updateOneLikes(idx); // if -1 indicates an error
+
+            // check if the update is performed correctly
+            if (status == -1) {
+                return gson.toJson(new StructuredResponse("error", "error performing likes", null));
             } else {
-                int status = -1; // initialize to -1, if not modified will indicate error
-                if (req.mLikes == 1) {
-                    if (req.mDislikes == 1) {
-                        // error because trying to update both
-                        return gson
-                                .toJson(new StructuredResponse("error", "cannot update both likes and dislikes", null));
-
-                    } else {
-                        // only update likes, update the status
-                        status = db.updateOneLikes(idx, data.mLikes);
-                    }
-                } else {
-                    if (req.mDislikes == 1) {
-                        // only update dislikes, update the status
-                        status = db.updateOneDislikes(idx, data.mDislikes);
-                    } else {
-                        // error because both won't update
-                        return gson.toJson(
-                                new StructuredResponse("error", "need to update at least one likes or dislikes", null));
-                    }
-                }
-                // check if the update is performed correctly
-                if (status == -1) {
-                    return gson.toJson(new StructuredResponse("error", "error performing updates", null));
-                } else {
-                    return gson.toJson(new StructuredResponse("ok", "" + status, null));
-                }
+                return gson.toJson(new StructuredResponse("ok", "" + status, null));
             }
+        });
 
+        // PUT route for liking and disliking the post. This will read m_id from the url
+        // and look for the id in database and increment dislike counts
+        Spark.put("messages/:m_id/dislike", (request, response) -> {
+            // parse the m_id attribute from the url
+            int idx = Integer.parseInt(request.params("m_id"));
+            // NB: if gson.Json fails, Spark will reply with status 500 Internal
+            // Server Error
+            // SimpleRequest req = gson.fromJson(request.body(), SimpleRequest.class);
+
+            response.status(200);
+            response.type("application/json");
+
+            int status = db.updateOneDislikes(idx); // if -1 indicates an error
+
+            // check if the update is performed correctly
+            if (status == -1) {
+                return gson.toJson(new StructuredResponse("error", "error performing dislikes", null));
+            } else {
+                return gson.toJson(new StructuredResponse("ok", "" + status, null));
+            }
         });
 
         // PUT route for updating a row in the DataStore. This is almost
-        // exactly the same as POST
-        // Spark.put("/messages/:id", (request, response) -> {
-        // // If we can't get an ID or can't parse the JSON, Spark will send
-        // // a status 500
-        // int idx = Integer.parseInt(request.params("id"));
-        // SimpleRequest req = gson.fromJson(request.body(), SimpleRequest.class);
-        // // ensure status 200 OK, with a MIME type of JSON
-        // response.status(200);
-        // response.type("application/json");
-        // int result = db.updateOne(idx, req.mMessage);
-        // if (result == -1) {
-        // return gson.toJson(new StructuredResponse("error", "unable to update row " +
-        // idx, null));
-        // } else {
-        // return gson.toJson(new StructuredResponse("ok", null, result));
-        // }
-        // });
+        // exactly the same as POST. Takes the m_id from url and look for the index in
+        // database
+        Spark.put("/messages/:m_id", (request, response) -> {
+            // If we can't get an ID or can't parse the JSON, Spark will send
+            // a status 500
+            int idx = Integer.parseInt(request.params("m_id"));
+            SimpleRequest req = gson.fromJson(request.body(), SimpleRequest.class);
+            // ensure status 200 OK, with a MIME type of JSON
+            response.status(200);
+            response.type("application/json");
+            int result = db.updateOne(idx, req.mMessage);
+            if (result == -1) {
+                return gson.toJson(new StructuredResponse("error", "unable to update row " + idx, null));
+            } else {
+                return gson.toJson(new StructuredResponse("ok", "" + result, null));
+            }
+        });
 
         // DELETE route for removing a row from the DataStore
-        // Spark.delete("/messages/:id", (request, response) -> {
-        // // If we can't get an ID, Spark will send a status 500
-        // int idx = Integer.parseInt(request.params("id"));
-        // // ensure status 200 OK, with a MIME type of JSON
-        // response.status(200);
-        // response.type("application/json");
-        // // NB: we won't concern ourselves too much with the quality of the
-        // // message sent on a successful delete
-        // int result = db.deleteRow(idx);
-        // if (result == -1) {
-        // return gson.toJson(new StructuredResponse("error", "unable to delete row " +
-        // idx, null));
-        // } else {
-        // return gson.toJson(new StructuredResponse("ok", null, null));
-        // }
-        // });
+        Spark.delete("/messages/:m_id", (request, response) -> {
+            // If we can't get an ID, Spark will send a status 500
+            int idx = Integer.parseInt(request.params("m_id"));
+            // ensure status 200 OK, with a MIME type of JSON
+            response.status(200);
+            response.type("application/json");
+            // NB: we won't concern ourselves too much with the quality of the
+            // message sent on a successful delete
+            int result = db.deleteRow(idx);
+            if (result == -1) {
+                return gson.toJson(new StructuredResponse("error", "unable to delete row " + idx, null));
+            } else {
+                return gson.toJson(new StructuredResponse("ok", "" + result, null));
+            }
+        });
 
         Spark.get("/hello", (req, res) -> {
             return "Hello World!";

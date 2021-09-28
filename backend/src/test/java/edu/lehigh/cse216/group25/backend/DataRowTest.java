@@ -1,32 +1,17 @@
 package edu.lehigh.cse216.group25.backend;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.*;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit test for simple App.
  */
-public class DataRowTest extends TestCase {
-    /**
-     * Create the test case
-     *
-     * @param testName name of the test case
-     */
-    public DataRowTest(String testName) {
-        super(testName);
-    }
-
-    /**
-     * @return the suite of tests being tested
-     */
-    public static Test suite() {
-        return new TestSuite(DataRowTest.class);
-    }
-
+public class DataRowTest {
     /**
      * Ensure that the constructor populates every field of the object it creates
      */
+    @Test
     public void testConstructor() {
         String title = "Test Title";
         String content = "Test Content";
@@ -42,6 +27,7 @@ public class DataRowTest extends TestCase {
     /**
      * Ensure that the copy constructor works correctly
      */
+    @Test
     public void testCopyconstructor() {
         String title = "Test Title For Copy";
         String content = "Test Content For Copy";

@@ -187,12 +187,13 @@ public class Database {
             // Standard CRUD operations
             db.mDeleteOne = db.mConnection.prepareStatement("DELETE FROM tblData WHERE id = ?");
             db.mInsertOne = db.mConnection
-                    .prepareStatement("INSERT INTO tblData VALUES (default, ?, ?, 0, 0, default)");
+                    .prepareStatement("INSERT INTO tblData VALUES (default, ?, ?, 0, 0, default) RETURNING id");
             db.mSelectAll = db.mConnection.prepareStatement("SELECT * FROM tblData");
             db.mSelectOne = db.mConnection.prepareStatement("SELECT * from tblData WHERE id=?");
             db.mUpdateOne = db.mConnection.prepareStatement("UPDATE tblData SET message = ? WHERE id = ?");
-            db.mUpdateOneLikes = db.mConnection.prepareStatement("UPDATE tblData SET likes = ? WHERE id = ?");
-            db.mUpdateOneDislikes = db.mConnection.prepareStatement("UPDATE tblData SET dislikes = ? WHERE id = ?");
+            db.mUpdateOneLikes = db.mConnection.prepareStatement("UPDATE tblData SET likes = likes + 1 WHERE id = ?");
+            db.mUpdateOneDislikes = db.mConnection
+                    .prepareStatement("UPDATE tblData SET dislikes = dislikes + 1 WHERE id = ?");
         } catch (SQLException e) {
             System.err.println("Error creating prepared statement");
             e.printStackTrace();
@@ -236,11 +237,16 @@ public class Database {
      * @return The number of rows that were inserted
      */
     int insertRow(String title, String message) {
-        int count = 0;
+        int count = -1;
         try {
             mInsertOne.setString(1, title);
             mInsertOne.setString(2, message);
-            count += mInsertOne.executeUpdate();
+            mInsertOne.execute();
+            ResultSet res = mInsertOne.getResultSet();
+            if (res.next()) {
+                count = res.getInt(1);
+            }
+            // System.out.println(count);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -303,7 +309,7 @@ public class Database {
         int res = -1;
         try {
             mDeleteOne.setInt(1, id);
-            res = mDeleteOne.executeUpdate();
+            res += mDeleteOne.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -323,7 +329,7 @@ public class Database {
         try {
             mUpdateOne.setString(1, message);
             mUpdateOne.setInt(2, id);
-            res = mUpdateOne.executeUpdate();
+            res += mUpdateOne.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -333,16 +339,14 @@ public class Database {
     /**
      * Increment the like count for the row at id in the database
      * 
-     * @param id    The id of the row to update
-     * @param likes The original like count
+     * @param id The id of the row to update
      * @return The number of rows that were updated. -1 indicates an error.
      */
-    int updateOneLikes(int id, int likes) {
+    int updateOneLikes(int id) {
         int res = -1;
         try {
-            mUpdateOneLikes.setInt(1, (likes + 1));
-            mUpdateOneLikes.setInt(2, id);
-            res = mUpdateOneLikes.executeUpdate();
+            mUpdateOneLikes.setInt(1, id);
+            res += mUpdateOneLikes.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -352,16 +356,14 @@ public class Database {
     /**
      * Increment the dislike count for the row at id in the database
      * 
-     * @param id       The id of the row to update
-     * @param dislikes The original dislike count
+     * @param id The id of the row to update
      * @return The number of rows that were updated. -1 indicates an error.
      */
-    int updateOneDislikes(int id, int dislikes) {
+    int updateOneDislikes(int id) {
         int res = -1;
         try {
-            mUpdateOneDislikes.setInt(1, (dislikes + 1));
-            mUpdateOneDislikes.setInt(2, id);
-            res = mUpdateOneDislikes.executeUpdate();
+            mUpdateOneDislikes.setInt(1, id);
+            res += mUpdateOneDislikes.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }

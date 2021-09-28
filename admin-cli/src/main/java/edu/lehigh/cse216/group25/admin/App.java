@@ -115,19 +115,41 @@ public class App {
      */
     public static void main(String[] argv) {
         // Get the port on which to listen for requests
+        final Gson gson = new Gson();
+
+        // Get the port on which to listen for requests
         Spark.port(getIntFromEnv("PORT", 4567));
+
         // get the Postgres configuration from the environment
         Map<String, String> env = System.getenv();
-        String ip = env.get("POSTGRES_IP");
-        String port = env.get("POSTGRES_PORT");
-        String user = env.get("POSTGRES_USER");
-        String pass = env.get("POSTGRES_PASS");
-
+        String db_url = env.get("DATABASE_URL");
         // Get a fully-configured connection to the database, or exit
         // immediately
-        Database db = Database.getDatabase(ip, port, user, pass);
-        if (db == null)
+        Database db = Database.getDatabase(db_url);
+        if (db == null) {
             return;
+        } else {
+            // print out if database is connected successfully
+            System.out.println("Postgres database connected!");
+            // db.dropTable();
+            // db.createTable();
+        }
+
+        // Set up the location for serving static files. If the STATIC_LOCATION
+        // environment variable is set, we will serve from it. Otherwise, serve
+        // from "/web"
+        String static_location_override = System.getenv("STATIC_LOCATION");
+        if (static_location_override == null) {
+            Spark.staticFileLocation("/web");
+        } else {
+            Spark.staticFiles.externalLocation(static_location_override);
+        }
+
+        // Set up a route for serving the main page
+        Spark.get("/", (req, res) -> {
+            res.redirect("/index.html");
+            return "";
+        });
 
         // Start our basic command-line interpreter:
         BufferedReader in = new BufferedReader(new InputStreamReader(System.in));

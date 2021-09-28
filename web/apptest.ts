@@ -33,13 +33,3 @@ it("UI Test: Add Button Hides Listing and Cancel Button Shows Listing", function
   // expect that the add form is hidden
   expect($("#addElement").attr("style").indexOf("display: none;")).toEqual(0);
 });
-
-it("UI Test: Edit Button Brings Edit Form", function () {
-  $(".editBtn:first").click();
-  // expect that the edit form is not hidden
-  expect($("#editElement").attr("style").indexOf("display: none;")).toEqual(-1);
-  // expect that the element listing is hidden
-  expect($("#showElements").attr("style").indexOf("display: none;")).toEqual(0);
-  // reset the UI, so we don't mess up the next test
-  $("#editCancel").click();
-});

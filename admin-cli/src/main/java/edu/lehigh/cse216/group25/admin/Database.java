@@ -46,8 +46,9 @@ public class Database {
     /**
      * A prepared statement for creating the table in our database
      */
-    private PreparedStatement mCreateTable;
-
+    private PreparedStatement mCreateTable1;
+    private PreparedStatement mCreateTable2;
+    private PreparedStatement mCreateTable3;
     /**
      * A prepared statement for dropping the table in our database
      */

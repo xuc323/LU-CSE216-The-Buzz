@@ -197,6 +197,36 @@ public class Database {
             return null;
         }
         return db;
+        try {
+            // NB: we can easily get ourselves in trouble here by typing the
+            // SQL incorrectly. We really should have things like "tblData"
+            // as constants, and then build the strings for the statements
+            // from those constants.
+
+            // Note: no "IF NOT EXISTS" or "IF EXISTS" checks on table
+            // creation/deletion, so multiple executions will cause an exception
+            // TODO: change the SQL syntax so it will be able to modify 3 tables
+            db.mCreateTable2 = db.mConnection.prepareStatement(
+                    "CREATE TABLE tblname1 (id SERIAL PRIMARY KEY, title VARCHAR(50) NOT NULL, message VARCHAR(500) NOT NULL, likes INT NOT NULL, dislikes INT NOT NULL, date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP)");
+                    db.mCreateTable1 = db.mConnection.prepareStatement(
+                    "CREATE TABLE tblname2 (id SERIAL PRIMARY KEY, title VARCHAR(50) NOT NULL, message VARCHAR(500) NOT NULL, likes INT NOT NULL, dislikes INT NOT NULL, date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP)");
+                    db.mCreateTable3 = db.mConnection.prepareStatement(
+                    "CREATE TABLE tblname3 (id SERIAL PRIMARY KEY, title VARCHAR(50) NOT NULL, message VARCHAR(500) NOT NULL, likes INT NOT NULL, dislikes INT NOT NULL, date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP)");
+            db.mDropTable = db.mConnection.prepareStatement("DROP TABLE tblname2");
+
+            // Standard CRUD operations
+            db.mDeleteOne = db.mConnection.prepareStatement("DELETE FROM tblName2 WHERE id = ?");
+            db.mInsertOne = db.mConnection.prepareStatement("INSERT INTO tblname2 VALUES (default, ?, ?, 0, 0, default) RETURNING id");
+            db.mSelectAll = db.mConnection.prepareStatement("SELECT * FROM tblname2");
+            db.mSelectOne = db.mConnection.prepareStatement("SELECT * from tblname2 WHERE id=?");
+            db.mUpdateOne = db.mConnection.prepareStatement("UPDATE tblname2 SET message = ? WHERE id = ?"); 
+        } catch (SQLException e) {
+            System.err.println("Error creating prepared statement");
+            e.printStackTrace();
+            db.disconnect();
+            return null;
+        }
+        return db;
     }
 
     /**
@@ -344,6 +374,11 @@ public class Database {
     void createTable() {
         try {
             mCreateTable1.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        try {
+            mCreateTable2.execute();
         } catch (SQLException e) {
             e.printStackTrace();
         }

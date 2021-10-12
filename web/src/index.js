@@ -3,19 +3,20 @@ import ReactDOM from 'react-dom';
 import "./stylesheets/normalize.css";
 import './stylesheets/index.css';
 import Post from "./scripts/Post.js";
+import Navbar from "./scripts/Navbar.js";
 
-function Welcome(props) {
-  return <h1>Hello, {props.name}</h1>;
-}
 
 function App() {
   return (
     <div>
-      <Welcome name="Sara" />
-      <Welcome name="Cahal" />
-      <Welcome name="Edite" />
-      <Post mTitle="HI" mMessage="Hello" />
-      <Post mTitle="HI" mMessage="Hello" />
+      <Navbar />
+      <div className="container">
+        <h1>Posts</h1>
+        <div className="container">
+          <Post mTitle="HI" mMessage="Hello" />
+          <Post mTitle="HI" mMessage="Hello" />
+        </div>
+      </div>
     </div>
   );
 }

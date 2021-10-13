@@ -62,6 +62,18 @@ public class Database {
      */
     private PreparedStatement mDropTable;
 
+    private PreparedStatement oCreateTable; 
+
+    private PreparedStatement oDropTable; 
+
+    private PreparedStatement oSelectAll;
+
+    private PreparedStatement oSelectOne;
+
+    private PreparedStatement oDeleteOne;
+
+    private PreparedStatement oInsertOne;
+
     /**
      * RowData is like a struct in C: we use it to hold data, and we allow direct
      * access to its fields. In the context of this Database, RowData represents the
@@ -194,6 +206,27 @@ public class Database {
             db.mUpdateOneLikes = db.mConnection.prepareStatement("UPDATE tblData SET likes = likes + 1 WHERE id = ?");
             db.mUpdateOneDislikes = db.mConnection
                     .prepareStatement("UPDATE tblData SET dislikes = dislikes + 1 WHERE id = ?");
+            
+        
+        /*
+            Defining the new relation "Payload", which includes the attributes: 
+                - Email (Primary Key)
+                - First Name
+                - Last Name
+                - Email_Verified
+                - Locale 
+        */ 
+            db.oCreateTable = db.mConnection.prepareStatement(
+                    "CREATE TABLE payload (email SERIAL PRIMARY KEY, first_name VARCHAR(15), last_name VARCHAR(20), picture_url VARCHAR(50), email_verified BIT, locale VARCHAR(50)");
+            db.oDropTable = db.mConnection.prepareStatement("DROP TABLE payload");
+            db.oDeleteOne = db.mConnection.prepareStatement("DELETE FROM payload WHERE email = ?");
+            db.oInsertOne = db.mConnection
+                    .prepareStatement("INSERT INTO payload VALUES (default, ?, ?, default, default) RETURNING email");
+            db.oSelectAll = db.mConnection.prepareStatement("SELECT * FROM payload");
+            db.oSelectOne = db.mConnection.prepareStatement("SELECT * from payload WHERE email=?");
+
+            
+            
         } catch (SQLException e) {
             System.err.println("Error creating prepared statement");
             e.printStackTrace();

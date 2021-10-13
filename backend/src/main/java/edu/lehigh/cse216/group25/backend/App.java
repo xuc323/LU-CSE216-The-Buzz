@@ -7,8 +7,25 @@ import spark.Spark;
 // Import Google's JSON library
 import com.google.gson.*;
 
+import java.util.Collections;
 // Import map to get env variables
 import java.util.Map;
+
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken.Payload;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
+import com.google.api.client.auth.openidconnect.IdToken;
+import com.google.api.client.auth.openidconnect.IdTokenVerifier;
+import com.google.api.client.http.HttpTransport;
+import com.google.api.client.json.JsonFactory;
+import com.google.api.client.util.Clock;
+import com.google.api.client.util.Preconditions;
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+import java.security.PublicKey;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * For now, our app creates an HTTP server with only one route.
@@ -17,6 +34,7 @@ import java.util.Map;
  * and requests /hello, we return "Hello World". Otherwise, we produce an error
  */
 public class App {
+
     public static void main(String[] args) {
 
         // gson provides us with a way to turn JSON into objects, and objects
@@ -57,8 +75,50 @@ public class App {
             Spark.staticFiles.externalLocation(static_location_override);
         }
 
+
+
+
+        //Code for Google API OAuth2.0 
+
+        HttpTransport transport;
+        JsonFactory jsonFactory;
+        
+        GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(transport, jsonFactory)
+                // Specify the CLIENT_ID of the app that accesses the backend:
+                .setAudience(Collections.singletonList(CLIENT_ID))
+                // Or, if multiple clients access the backend:
+                // .setAudience(Arrays.asList(CLIENT_ID_1, CLIENT_ID_2, CLIENT_ID_3))
+                .build();
+
+        // (Receive idTokenString by HTTPS POST)
+
+        GoogleIdToken idToken = verifier.verify(idTokenString);
+        if (idToken != null) {
+            Payload payload = idToken.getPayload();
+
+            // Print user identifier
+            String userId = payload.getSubject();
+            System.out.println("User ID: " + userId);
+
+            // Get profile information from payload
+            String email = payload.getEmail();
+            boolean emailVerified = Boolean.valueOf(payload.getEmailVerified());
+            String name = (String) payload.get("name");
+            String pictureUrl = (String) payload.get("picture");
+            String locale = (String) payload.get("locale");
+            String familyName = (String) payload.get("family_name");
+            String givenName = (String) payload.get("given_name");
+
+            // Use or store profile information
+            // ...
+
+        } else {
+            System.out.println("Invalid ID token.");
+        }
+
         // Set up a route for serving the main page
         Spark.get("/", (req, res) -> {
+
             res.redirect("/index.html");
             return "";
         });

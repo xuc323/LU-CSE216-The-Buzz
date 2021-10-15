@@ -1,56 +1,43 @@
-function Navbar() {
-    return (
-        <nav className="navbar navbar-expand-md navbar-light bg-secondary">
-            <div className="container-lg">
-                <a className="navbar-brand" href="/">
-                    <i className="bi bi-house-fill"></i>
-                    Home
-                </a>
+import React from "react";
 
-                <button
-                    class="navbar-toggler"
-                    type="button"
-                    data-bs-toggle="collapse"
-                    data-bs-target="#navbarToggler"
-                >
-                    <span class="navbar-toggler-icon"></span>
-                </button>
+class Navbar extends React.Component {
+    constructor(props) {
+        super(props);
+    }
 
-                <div class="collapse navbar-collapse" id="navbarToggler">
-                    <ul class="navbar-nav me-auto mb-2 mb-md-0">
-                        <li class="nav-item">
-                            <a class="nav-link" href="/about">
-                                <i class="bi bi-info-circle-fill"></i>
-                                About
-                            </a>
-                        </li>
+    render() {
+        return (
+            <nav className="navbar navbar-expand-md navbar-light bg-light" >
+                <div className="container-lg">
+                    <a className="navbar-brand" href="/"><i className="bi bi-house-fill"></i> Home</a>
+                    <button
+                        className="navbar-toggler"
+                        typeof="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#navbarToggler"
+                    >
+                        <span className="navbar-toggler-icon"></span>
+                    </button>
 
-                        <li class="nav-item">
-                            <a class="nav-link" href="">
-                                <i class="bi bi-inbox-fill"></i>
-                                Feedback
-                            </a>
-                        </li>
+                    <div className="collapse navbar-collapse" id="navbarToggler">
+                        <ul className="navbar-nav me-auto mb-2 mb-md-0">
+                            <li className="nav-item">
+                                <a className="nav-link" href="/"><i className="bi bi-info-circle-fill"></i> About</a>
+                            </li>
 
-                        <li class="nav-item">
-                            <a class="nav-link" href="/account">
-                                <i class="bi bi-person-circle"></i>
-                                Account
-                            </a>
-                        </li>
-                    </ul>
-                    <form class="d-flex">
-                        <input
-                            class="form-control me-2"
-                            type="search"
-                            placeholder="Search..."
-                        />
-                        <button class="btn btn-outline-success" type="submit">Search</button>
-                    </form>
+                            <li className="nav-item">
+                                <a className="nav-link" href="/"><i className="bi bi-inbox-fill"></i> Feedback</a>
+                            </li>
+
+                            <li className="nav-item">
+                                <a className="nav-link" href="/account"><i className="bi bi-person-circle"></i> Account</a>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
-            </div>
-        </nav>
-    )
+            </nav>
+        );
+    }
 }
 
 export default Navbar;

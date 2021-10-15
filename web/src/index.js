@@ -1,41 +1,52 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import "./stylesheets/normalize.css";
-import './stylesheets/index.css';
-import Post from "./scripts/Post.js";
+import { Post, AddPostBtn } from "./scripts/Post.js";
 import Navbar from "./scripts/Navbar.js";
 
-
-function App() {
-  return (
-    <div>
-      <Navbar />
-      <div className="container">
-        <h1>Posts</h1>
+class App extends React.Component {
+  render() {
+    return (
+      <div>
+        <Navbar />
         <div className="container">
-          <Post mTitle="HI" mMessage="Hello" />
-          <Post mTitle="HI" mMessage="Hello" />
+          <h1>Posts</h1>
+          <Clock />
+          <AddPostBtn />
+          <Post />
         </div>
       </div>
-    </div>
-  );
+    );
+  }
 }
 
-function Avatar(props) {
-  return (
-    <img className="Avatar" src={props.user.avatarUrl} alt={props.user.name} />
-  );
-}
+class Clock extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { date: new Date() };
+  }
 
-function UserInfo(props) {
-  return (
-    <div className="UserInfo">
-      <Avatar user={props.user} />
-      <div className="UserInfo-name">
-        {props.user.name}
+  componentDidMount() {
+    this.timerID = setInterval(() => this.tick(), 1000);
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.timerID);
+  }
+
+  tick() {
+    this.setState({
+      date: new Date()
+    });
+  }
+
+  render() {
+    return (
+      <div>
+        <h2>It is {this.state.date.toLocaleTimeString()}.</h2>
       </div>
-    </div>
-  )
+    );
+  }
 }
 
 ReactDOM.render(

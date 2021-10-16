@@ -30,7 +30,7 @@ class Navbar extends React.Component {
                             </li>
 
                             <li className="nav-item">
-                                <a className="nav-link" href="/account"><i className="bi bi-person-circle"></i> Account</a>
+                                <a className="nav-link" href="/"><i className="bi bi-person-circle"></i> Account</a>
                             </li>
                         </ul>
                     </div>

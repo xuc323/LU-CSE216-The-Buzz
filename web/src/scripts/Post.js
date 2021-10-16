@@ -1,4 +1,5 @@
 import React from 'react';
+import { Avatar } from './User';
 
 class Post extends React.Component {
     constructor(props) {
@@ -183,7 +184,7 @@ class Post extends React.Component {
                 <div className="container" id="editEntryForm" hidden>
                     <h3>Edit an Entry</h3>
                     <label>Title</label>
-                    <input type="text" id="editTitle" className="form-control" placeholder="Title"></input>
+                    <input type="text" id="editTitle" className="form-control" placeholder="Title" disabled></input>
                     <label>Message</label>
                     <textarea id="editMessage" className="form-control" placeholder="Message Content..."></textarea>
                     <button type="button" className="btn btn-primary" id="editSubmit">Submit</button>
@@ -195,9 +196,9 @@ class Post extends React.Component {
                         Add Message
                     </button>
                     {this.state.data.map(p => (
-                        <div className="bg-light bg-gradient" id={p.mId}>
+                        <div className="bg-light bg-gradient p-3 m-3" id={p.mId}>
                             <div>
-                                <img src="" title="dd"></img>
+                                <Avatar mId={p.mId} />
                             </div>
                             <h5 className="text-break">{p.mTitle}</h5>
                             <p className="text-break">{p.mMessage}</p>

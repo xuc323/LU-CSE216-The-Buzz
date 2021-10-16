@@ -52,7 +52,7 @@ public class App {
         // from "/web"
         String static_location_override = System.getenv("STATIC_LOCATION");
         if (static_location_override == null) {
-            Spark.staticFileLocation("/web");
+            Spark.staticFileLocation("/build");
         } else {
             Spark.staticFiles.externalLocation(static_location_override);
         }

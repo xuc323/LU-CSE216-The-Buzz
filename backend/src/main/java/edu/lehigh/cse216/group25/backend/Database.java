@@ -209,15 +209,15 @@ public class Database {
             
         
         /*
-            Defining the new relation "Payload", which includes the attributes: 
-                - Email (Primary Key)
-                - First Name
-                - Last Name
-                - Email_Verified
-                - Locale 
-        */ 
+         * Defining the new relation "Payload", which includes the attributes: - Email
+         * (Primary Key) - First Name - Last Name - Email_Verified - Locale
+         * 
+         * https://fhbjgbiflinjbdggehcddcbncdddomop.chromiumapp.org/oauth2-request?
+         * result=failure&message=Could+not+make+access+token+requests.The+feature+has+
+         * been+deprecated,please+download+the+latest+Postman+app
+         */ 
             db.oCreateTable = db.mConnection.prepareStatement(
-                    "CREATE TABLE payload (email SERIAL PRIMARY KEY, first_name VARCHAR(15), last_name VARCHAR(20), picture_url VARCHAR(50), email_verified BIT, locale VARCHAR(50)");
+                    "CREATE TABLE payload (id SERIAL PRIMARY KEY, email SERIAL PRIMARY KEY, first_name VARCHAR(15), last_name VARCHAR(20), picture_url VARCHAR(50), email_verified BIT, locale VARCHAR(50)");
             db.oDropTable = db.mConnection.prepareStatement("DROP TABLE payload");
             db.oDeleteOne = db.mConnection.prepareStatement("DELETE FROM payload WHERE email = ?");
             db.oInsertOne = db.mConnection

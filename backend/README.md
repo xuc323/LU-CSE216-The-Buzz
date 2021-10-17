@@ -245,3 +245,40 @@ curl \
 --request POST \
 --data "code=4/0AX4XfWj95qATxS7J240ppKs1H2UabwxoEcdeQ3uyDXmSTVtESrRaqcrJYup_iNMsdggm8Q&client_id=273353928555-jlrr9q6grlf6n1sd07p7mc06l06ft98d.apps.googleusercontent.com&client_secret=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&redirect_uri=http://localhost&grant_type=authorization_code" \
 https://accounts.google.com/o/oauth2/token
+
+
+--------------------------------------------------------------------------------------
+
+Lets do it again... Different method this time... 
+
+ClientID: 
+Client Secret: 
+
+
+code: 4/0AX4XfWhCtre5EdBbb1LWQsJ8nspdodJOfZngi-_2CRrY1j5nM5aLJWWAZrU1bWp0xM1jxg
+
+
+http://localhost/?code=4/0AX4XfWhCtre5EdBbb1LWQsJ8nspdodJOfZngi-_2CRrY1j5nM5aLJWWAZrU1bWp0xM1jxg&scope=https://mail.google.com/
+
+
+
+POSTMAN UPDATE>>>>>>>>>
+
+New: October 13th: 9:30PM 
+
+Client_id: 273353928555-bvbdkuqbhe7fpkdalk7ejll2550qleef.apps.googleusercontent.com
+
+
+
+client-secret: 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
+
+Result Code: https://fhbjgbiflinjbdggehcddcbncdddomop.chromiumapp.org/oauth2-request?result=failure&message=Could+not+make+access+token+requests.The+feature+has+been+deprecated,please+download+the+latest+Postman+app
+
+
+
+
+
+
+Go on : https://developers.google.com/oauthplayground to play around with authorization and access keys 
+
+

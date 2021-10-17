@@ -35,6 +35,7 @@ import java.util.List;
  */
 public class App {
 
+
     public static void main(String[] args) {
 
         // gson provides us with a way to turn JSON into objects, and objects
@@ -82,46 +83,52 @@ public class App {
 
         HttpTransport transport;
         JsonFactory jsonFactory;
-        
-        GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(transport, jsonFactory)
-                // Specify the CLIENT_ID of the app that accesses the backend:
-                .setAudience(Collections.singletonList(CLIENT_ID))
-                // Or, if multiple clients access the backend:
-                // .setAudience(Arrays.asList(CLIENT_ID_1, CLIENT_ID_2, CLIENT_ID_3))
-                .build();
 
-        // (Receive idTokenString by HTTPS POST)
-
-        GoogleIdToken idToken = verifier.verify(idTokenString);
-        if (idToken != null) {
-            Payload payload = idToken.getPayload();
-
-            // Print user identifier
-            String userId = payload.getSubject();
-            System.out.println("User ID: " + userId);
-
-            // Get profile information from payload
-            String email = payload.getEmail();
-            boolean emailVerified = Boolean.valueOf(payload.getEmailVerified());
-            String name = (String) payload.get("name");
-            String pictureUrl = (String) payload.get("picture");
-            String locale = (String) payload.get("locale");
-            String familyName = (String) payload.get("family_name");
-            String givenName = (String) payload.get("given_name");
-
-            // Use or store profile information
-            // ...
-
-        } else {
-            System.out.println("Invalid ID token.");
-        }
 
         // Set up a route for serving the main page
         Spark.get("/", (req, res) -> {
 
+            GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(transport, jsonFactory)
+                    // Specify the CLIENT_ID of the app that accesses the backend:
+                    .setAudience(Collections.singletonList(CLIENT_ID))
+                    // Or, if multiple clients access the backend:
+                    // .setAudience(Arrays.asList(CLIENT_ID_1, CLIENT_ID_2, CLIENT_ID_3))
+                    .build();
+
+            // (Receive idTokenString by HTTPS POST)
+
+            GoogleIdToken idToken = verifier.verify(idTokenString);
+            if (idToken != null) {
+                Payload payload = idToken.getPayload();
+
+                // Print user identifier
+                String userId = payload.getSubject();
+                System.out.println("User ID: " + userId);
+
+                // Get profile information from payload
+                String email = payload.getEmail();
+                boolean emailVerified = Boolean.valueOf(payload.getEmailVerified());
+                String name = (String) payload.get("name");
+                String pictureUrl = (String) payload.get("picture");
+                String locale = (String) payload.get("locale");
+                String familyName = (String) payload.get("family_name");
+                String givenName = (String) payload.get("given_name");
+
+                // Use or store profile information
+                // ...
+
+            } else {
+                System.out.println("Invalid ID token.");
+            }
+
             res.redirect("/index.html");
             return "";
         });
+
+        Spark.post("/login", (response, request) -> {
+            
+        });
+
 
         // GET route that returns all message titles and Ids. All we do is get
         // the data, embed it in a StructuredResponse, turn it into JSON, and

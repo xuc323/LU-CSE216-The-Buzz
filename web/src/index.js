@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import "./stylesheets/normalize.css";
 import Post from "./scripts/Post.js";
-// import { LoginPage } from './scripts/User.js';
+import { LoginBtn } from './scripts/User.js';
 import Navbar from "./scripts/Navbar.js";
 
 class App extends React.Component {
@@ -13,6 +13,7 @@ class App extends React.Component {
         <div className="container">
           <h1>The Buzz App</h1>
           <Clock />
+          <LoginBtn />
           <Post />
         </div>
       </div>

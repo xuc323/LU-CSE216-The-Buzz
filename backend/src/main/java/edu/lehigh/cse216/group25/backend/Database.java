@@ -1,4 +1,4 @@
-package edu.lehigh.cse216.group25.backend;
+package src.main.java.edu.lehigh.cse216.group25.backend;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -208,16 +208,13 @@ public class Database {
                     .prepareStatement("UPDATE tblData SET dislikes = dislikes + 1 WHERE id = ?");
             
         
+
         /*
          * Defining the new relation "Payload", which includes the attributes: - Email
          * (Primary Key) - First Name - Last Name - Email_Verified - Locale
-         * 
-         * https://fhbjgbiflinjbdggehcddcbncdddomop.chromiumapp.org/oauth2-request?
-         * result=failure&message=Could+not+make+access+token+requests.The+feature+has+
-         * been+deprecated,please+download+the+latest+Postman+app
          */ 
             db.oCreateTable = db.mConnection.prepareStatement(
-                    "CREATE TABLE payload (id SERIAL PRIMARY KEY, email SERIAL PRIMARY KEY, first_name VARCHAR(15), last_name VARCHAR(20), picture_url VARCHAR(50), email_verified BIT, locale VARCHAR(50)");
+                    "CREATE TABLE payload (email VARCHAR(30) PRIMARY KEY, first_name VARCHAR(15), last_name VARCHAR(20), picture_url VARCHAR(50))");
             db.oDropTable = db.mConnection.prepareStatement("DROP TABLE payload");
             db.oDeleteOne = db.mConnection.prepareStatement("DELETE FROM payload WHERE email = ?");
             db.oInsertOne = db.mConnection
@@ -225,6 +222,36 @@ public class Database {
             db.oSelectAll = db.mConnection.prepareStatement("SELECT * FROM payload");
             db.oSelectOne = db.mConnection.prepareStatement("SELECT * from payload WHERE email=?");
 
+        /*
+         * You need to define a database table that returns a list of all users registered to
+         *  the database, and also a table that connects a user existing in the "payload"
+         * table to a specific id. You are also able to add comments to the table as well. 
+         * 
+         * Conclusion: Table 1: Message information (No User Data)
+         *             Table 2: User information (No Message Data)
+         *             Table 3: Email + Message_ID + Comment_ID 
+         *             Table 4: Comment information (No User Data) 
+        */ 
+            db.lCreateTable = db.mConnection.prepareStatement(
+                    "CREATE TABLE linkage (id SERIAL PRIMARY KEY, email VARCHAR(30), c_id INT, "
+            );
+
+            db.lDropTable = db.mConnection.prepareStatement("DROP TABLE linkage");
+            db.lDeleteOne = db.mConnection.prepareStatement("DELETE FROM linkage WHERE id = ?");
+            db.lInsertOne = db.mConnection
+                    .prepareStatement("INSERT INTO payload VALUES (default, ?, ?) RETURNING id");
+            db.lSelectAll = db.mConnection.prepareStatement("SELECT * FROM linkage");
+            db.lSelectOne = db.mConnection.prepareStatement("SELECT * from linkage WHERE id = ?");
+
+
+            db.cCreateTable = db.mConnection
+                    .prepareStatement("CREATE TABLE comments (id SERIAL PRIMARY KEY, c_id INT, c_message VARCHAR(500)");
+
+            db.cDropTable = db.mConnection.prepareStatement("DROP TABLE linkage");
+            db.cDeleteOne = db.mConnection.prepareStatement("DELETE FROM linkage WHERE id = ?");
+            db.cInsertOne = db.mConnection.prepareStatement("INSERT INTO payload VALUES (default, ?, ?) RETURNING id");
+            db.cSelectAll = db.mConnection.prepareStatement("SELECT * FROM linkage");
+            db.cSelectOne = db.mConnection.prepareStatement("SELECT * from linkage WHERE id = ?");
             
             
         } catch (SQLException e) {

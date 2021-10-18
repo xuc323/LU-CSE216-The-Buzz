@@ -140,14 +140,6 @@
 }
 ```
 
-### **POST - /login 
-
-- Accept a JSON body and then input all UID information in database. 
-
-### _Accepts_:
-
-- 
-
 ---
 
 ## Setup
@@ -288,37 +280,5 @@ Result Code: https://fhbjgbiflinjbdggehcddcbncdddomop.chromiumapp.org/oauth2-req
 
 
 Go on : https://developers.google.com/oauthplayground to play around with authorization and access keys 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-### Testing
-
-https://accounts.google.com/gsi/select?client_id=496410238969-mvosj73q4tnp1dumhbpfbucato5ner3k.apps.googleusercontent.com&ux_mode=popup&ui_mode=card&as=GPbpbuBeqSWa%2Bpld1Qg7lw&channel_id=af42b996fdb3a6ed52155282a3741c4dff055238298edc9c3ec69ca05734b8ca&origin=https%3A%2F%2Fthe-buzz-group25.herokuapp.com
 
 

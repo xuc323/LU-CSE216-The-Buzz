@@ -1,4 +1,4 @@
-package edu.lehigh.cse216.group25.backend;
+package src.main.java.edu.lehigh.cse216.group25.backend;
 
 import java.util.Date;
 

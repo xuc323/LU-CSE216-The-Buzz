@@ -1,4 +1,4 @@
-package edu.lehigh.cse216.group25.backend;
+package src.main.java.edu.lehigh.cse216.group25.backend;
 
 /**
  * SimpleRequest provides a format for clients to present title and message
@@ -28,4 +28,6 @@ public class SimpleRequest {
      * database.
      */
     public int mDislikes;
+
+
 }

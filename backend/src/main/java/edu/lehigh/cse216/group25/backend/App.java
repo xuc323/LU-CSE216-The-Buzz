@@ -47,6 +47,12 @@ public class App {
         // https://stackoverflow.com/questions/10380835/is-it-ok-to-use-gson-instance-as-a-static-field-in-a-model-bean-reuse
         final Gson gson = new Gson();
 
+        /*
+            Defining our constants... CLIENT_WEB and CLIENT_ANDROID
+
+        */ 
+        const CLIENT_ID = "496410238969-mvosj73q4tnp1dumhbpfbucato5ner3k.apps.googleusercontent.com";
+
         // Get the port on which to listen for requests
         Spark.port(getIntFromEnv("PORT", 4567));
 
@@ -76,51 +82,49 @@ public class App {
             Spark.staticFiles.externalLocation(static_location_override);
         }
 
+        HttpRequestFactory example = new HttpRequestFactory createRequestFactory()
+        JsonFactory example2 = new JsonFactory createJsonObjectParser();
+
+        GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(example, example2)
+                // Specify the CLIENT_ID of the app that accesses the backend:
+                .setAudience(Collections.singletonList(CLIENT_ID))
+                // Or, if multiple clients access the backend:
+                // .setAudience(Arrays.asList(CLIENT_ID_1, CLIENT_ID_2, CLIENT_ID_3))
+                .build();
+
+        // (Receive idTokenString by HTTPS POST)
+
+        GoogleIdToken idToken = verifier.verify(idTokenString);
+        if (idToken != null) {
+            Payload payload = idToken.getPayload();
+
+            // Print user identifier
+            String userId = payload.getSubject();
+            System.out.println("User ID: " + userId);
+
+            // Get profile information from payload
+            String email = payload.getEmail();
+            boolean emailVerified = Boolean.valueOf(payload.getEmailVerified());
+            String name = (String) payload.get("name");
+            String pictureUrl = (String) payload.get("picture");
+            String locale = (String) payload.get("locale");
+            String familyName = (String) payload.get("family_name");
+            String givenName = (String) payload.get("given_name");
+
+            // Use or store profile information
+            // ...
+
+        } else {
+            System.out.println("Invalid ID token.");
+        }
 
 
 
         //Code for Google API OAuth2.0 
 
-        HttpTransport transport;
-        JsonFactory jsonFactory;
-
 
         // Set up a route for serving the main page
         Spark.get("/", (req, res) -> {
-
-            GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(transport, jsonFactory)
-                    // Specify the CLIENT_ID of the app that accesses the backend:
-                    .setAudience(Collections.singletonList(CLIENT_ID))
-                    // Or, if multiple clients access the backend:
-                    // .setAudience(Arrays.asList(CLIENT_ID_1, CLIENT_ID_2, CLIENT_ID_3))
-                    .build();
-
-            // (Receive idTokenString by HTTPS POST)
-
-            GoogleIdToken idToken = verifier.verify(idTokenString);
-            if (idToken != null) {
-                Payload payload = idToken.getPayload();
-
-                // Print user identifier
-                String userId = payload.getSubject();
-                System.out.println("User ID: " + userId);
-
-                // Get profile information from payload
-                String email = payload.getEmail();
-                boolean emailVerified = Boolean.valueOf(payload.getEmailVerified());
-                String name = (String) payload.get("name");
-                String pictureUrl = (String) payload.get("picture");
-                String locale = (String) payload.get("locale");
-                String familyName = (String) payload.get("family_name");
-                String givenName = (String) payload.get("given_name");
-
-                // Use or store profile information
-                // ...
-
-            } else {
-                System.out.println("Invalid ID token.");
-            }
-
             res.redirect("/index.html");
             return "";
         });
@@ -265,6 +269,28 @@ public class App {
         Spark.get("/hello", (req, res) -> {
             return "Hello World!";
         });
+
+        //Routing for posting comments 
+
+        Spark.post("/messages/:m_id/comments", (request, response) -> {
+            SimpleRequest req = gson.fromJson(request.body(), SimpleRequest.class);
+
+            // If we can't get an ID, status 500 returned.. 
+            int idx = Integer.parseInt(request.params("m_id"));
+            // ensure status 200 OK, with a MIME type of JSON
+            // NB: even on error, we return 200, but with a JSON object that
+            // describes the error.
+            response.status(200);
+            
+            response.type("application/json");
+            // NB: createEntry checks for null title and message
+            int status = db.insertRow(req.mTitle, req.mMessage);
+            if (status == 0) {
+                return gson.toJson(new StructuredResponse("error", "error performing insertion", null));
+            } else {
+                return gson.toJson(new StructuredResponse("ok", "" + status, null));
+            }
+        })
 
     }
 

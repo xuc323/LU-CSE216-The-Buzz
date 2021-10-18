@@ -232,9 +232,10 @@ public class Database {
          *             Table 3: Email + Message_ID + Comment_ID 
          *             Table 4: Comment information (No User Data) 
         */ 
+
+            //Linking table initialization 
             db.lCreateTable = db.mConnection.prepareStatement(
-                    "CREATE TABLE linkage (id SERIAL PRIMARY KEY, email VARCHAR(30), c_id INT, "
-            );
+                    "CREATE TABLE linkage (id SERIAL PRIMARY KEY, email VARCHAR(30), c_id INT, ");
 
             db.lDropTable = db.mConnection.prepareStatement("DROP TABLE linkage");
             db.lDeleteOne = db.mConnection.prepareStatement("DELETE FROM linkage WHERE id = ?");
@@ -244,12 +245,13 @@ public class Database {
             db.lSelectOne = db.mConnection.prepareStatement("SELECT * from linkage WHERE id = ?");
 
 
+            //Comments table initialization 
             db.cCreateTable = db.mConnection
                     .prepareStatement("CREATE TABLE comments (id SERIAL PRIMARY KEY, c_id INT, c_message VARCHAR(500)");
 
             db.cDropTable = db.mConnection.prepareStatement("DROP TABLE linkage");
             db.cDeleteOne = db.mConnection.prepareStatement("DELETE FROM linkage WHERE id = ?");
-            db.cInsertOne = db.mConnection.prepareStatement("INSERT INTO payload VALUES (default, ?, ?) RETURNING id");
+            db.cInsertOne = db.mConnection.prepareStatement("INSERT INTO comments VALUES (default, ?, ?) RETURNING id");
             db.cSelectAll = db.mConnection.prepareStatement("SELECT * FROM linkage");
             db.cSelectOne = db.mConnection.prepareStatement("SELECT * from linkage WHERE id = ?");
             
@@ -288,7 +290,8 @@ public class Database {
         return true;
     }
 
-    /**
+    /*
+     *
      * Insert a row into the database
      * 
      * @param title   The title for this new row
@@ -306,11 +309,44 @@ public class Database {
             if (res.next()) {
                 count = res.getInt(1);
             }
-            // System.out.println(count);
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return count;
+    }
+
+
+    //Inserting a comment into the database. Corresponds with specific id
+    int insertRow(String message) {
+        int count = -1; 
+        try {
+            cInsertOne.setInt(1, 1); //Set "?" parameter of method cInsertOne
+            cInsertOne.setString(2, message); //Set "?" parameter of method cInsertOne
+            ResultSet res = cInsertOne.getResultSet();
+            if (res.next()) {
+                count = res.getInt(1); //Counts number of rows added
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return count; 
+    }
+
+    int insertRowInfo(int id, String u_id) {
+        int count = -1; 
+        try {
+            Statement stmt = con.createStatement();
+            String check_value = stmt.executeQuery("SELECT COUNT(c_id) FROM linking WHERE id = "+id+"");
+            int holder = parseInt(check_value);
+            lInsertOne.set
+            if (holder > 0) {
+                console.log(holder); 
+                ResultSet res = lInsertOne.getResultSet();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return count; 
     }
 
     /**
@@ -436,10 +472,14 @@ public class Database {
     void createTable() {
         try {
             mCreateTable.execute();
+            oCreateTable.execute();
+            cCreateTable.execute();
+            lCreateTable.execute();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
+
 
     /**
      * Remove tblData from the database. If it does not exist, this will print an

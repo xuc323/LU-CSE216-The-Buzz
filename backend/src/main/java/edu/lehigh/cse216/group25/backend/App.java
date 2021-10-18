@@ -93,31 +93,45 @@ public class App {
                 .build();
 
         // (Receive idTokenString by HTTPS POST)
+        Spark.post("/login", (request, response) -> {
 
-        GoogleIdToken idToken = verifier.verify(idTokenString);
-        if (idToken != null) {
-            Payload payload = idToken.getPayload();
+            GoogleIdToken idToken = verifier.verify(request.body);
+            if (idToken != null) {
+                Payload payload = idToken.getPayload();
 
             // Print user identifier
-            String userId = payload.getSubject();
-            System.out.println("User ID: " + userId);
+                // String userId = payload.getSubject();
+                // System.out.println("User ID: " + userId);
 
             // Get profile information from payload
-            String email = payload.getEmail();
-            boolean emailVerified = Boolean.valueOf(payload.getEmailVerified());
-            String name = (String) payload.get("name");
-            String pictureUrl = (String) payload.get("picture");
-            String locale = (String) payload.get("locale");
-            String familyName = (String) payload.get("family_name");
-            String givenName = (String) payload.get("given_name");
+                String email = payload.getEmail();
+                Boolean check_email = email.contains("@lehigh.edu");
 
-            // Use or store profile information
-            // ...
+                if (check_email = true) {
+                    
+                }
 
-        } else {
-            System.out.println("Invalid ID token.");
+                
+                String name = (String) payload.get("name");
+                String pictureUrl = (String) payload.get("picture");
+                String locale = (String) payload.get("locale");
+                String familyName = (String) payload.get("family_name");
+                String givenName = (String) payload.get("given_name");
+
+            /*
+                Input new user information in database. 
+                Once "registered", you can add U_ID (email) 
+                to the hash table along with a randomly generated
+                session key. 
+            */
+
+            } else {
+                System.out.println("Invalid ID token.");
         }
 
+
+        });
+    
 
 
         //Code for Google API OAuth2.0 
@@ -129,9 +143,6 @@ public class App {
             return "";
         });
 
-        Spark.post("/login", (response, request) -> {
-            
-        });
 
 
         // GET route that returns all message titles and Ids. All we do is get
@@ -181,6 +192,22 @@ public class App {
             int status = db.insertRow(req.mTitle, req.mMessage);
             if (status == 0) {
                 return gson.toJson(new StructuredResponse("error", "error performing insertion", null));
+            } else {
+                return gson.toJson(new StructuredResponse("ok", "" + status, null));
+            }
+        });
+
+        Spark.post("/messages/:m_id/comments", (request, response) -> {
+            SimpleRequest req = gson.fromJson(request.body(), SimpleRequest.class);
+            int idx = Integer.parseInt(request.params("m_id"));
+            response.status(200); 
+            response.type("application/json");
+
+            //Only pass the message body into the specific message id you want to make a comment for 
+            int status = db.insertRow(req.mMessage); 
+            int info_status = db.insertRowInfo(idx, email);
+            if (status == 0) { 
+                return gson.toJson(new StructuredResponse("error", "error inserting comment...", null));
             } else {
                 return gson.toJson(new StructuredResponse("ok", "" + status, null));
             }
@@ -281,7 +308,7 @@ public class App {
             // NB: even on error, we return 200, but with a JSON object that
             // describes the error.
             response.status(200);
-            
+
             response.type("application/json");
             // NB: createEntry checks for null title and message
             int status = db.insertRow(req.mTitle, req.mMessage);
@@ -290,7 +317,7 @@ public class App {
             } else {
                 return gson.toJson(new StructuredResponse("ok", "" + status, null));
             }
-        })
+        });
 
     }
 

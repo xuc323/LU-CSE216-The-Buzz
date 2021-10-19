@@ -83,7 +83,53 @@ public class App {
             Spark.staticFiles.externalLocation(static_location_override);
         }
 
-        GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(example, example2)
+
+    /*
+        CORS Coding: Enabling Cross-Server-Access. Important to connect the Android application
+        to our pre-existing Frontend/Backend
+    */
+        String cors_enabled = env.get("CORS_ENABLED");
+        if (cors_enabled.equals("True")) {
+            final String acceptCrossOriginRequestsFrom = "*";
+            final String acceptedCrossOriginRoutes = "GET,PUT,POST,DELETE,OPTIONS";
+            final String supportedRequestHeaders = "Content-Type,Authorization,X-Requested-With,Content-Length,Accept,Origin";
+            enableCORS(acceptCrossOriginRequestsFrom, acceptedCrossOriginRoutes, supportedRequestHeaders);
+        }
+
+        /*
+        * Set up CORS headers for the OPTIONS verb, and for every response that the
+        * server sends.  This only needs to be called once.
+        * 
+        * @param origin The server that is allowed to send requests to this server
+        * @param methods The allowed HTTP verbs from the above origin
+        * @param headers The headers that can be sent with a request from the above
+        *                origin
+        */
+        private static void enableCORS(String origin, String methods, String headers) {
+            // Create an OPTIONS route that reports the allowed CORS headers and methods
+            Spark.options("/*", (request, response) -> {
+                String accessControlRequestHeaders = request.headers("Access-Control-Request-Headers");
+                if (accessControlRequestHeaders != null) {
+                    response.header("Access-Control-Allow-Headers", accessControlRequestHeaders);
+                }
+                String accessControlRequestMethod = request.headers("Access-Control-Request-Method");
+                if (accessControlRequestMethod != null) {
+                    response.header("Access-Control-Allow-Methods", accessControlRequestMethod);
+                }
+                return "OK";
+            });
+
+            // 'before' is a decorator, which will run before any 
+            // get/post/put/delete.  In our case, it will put three extra CORS
+            // headers into the response
+            Spark.before((request, response) -> {
+                response.header("Access-Control-Allow-Origin", origin);
+                response.header("Access-Control-Request-Method", methods);
+                response.header("Access-Control-Allow-Headers", headers);
+            });
+        }
+
+        GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(HttpTransport transport, JsonFactory Jsonfactory)
                 // Specify the CLIENT_ID of the app that accesses the backend:
                 .setAudience(Collections.singletonList(CLIENT_ID))
                 // Or, if multiple clients access the backend:
@@ -182,6 +228,7 @@ public class App {
         Spark.post("/messages", (request, response) -> {
             // NB: if gson.Json fails, Spark will reply with status 500 Internal
             // Server Error
+            const SESSION_KEY = request.queryParams("session_key");
             SimpleRequest req = gson.fromJson(request.body(), SimpleRequest.class);
             // ensure status 200 OK, with a MIME type of JSON
             // NB: even on error, we return 200, but with a JSON object that
@@ -205,7 +252,7 @@ public class App {
 
             //Only pass the message body into the specific message id you want to make a comment for 
             int status = db.insertRow(req.mMessage); 
-            int info_status = db.insertRowInfo(idx, email);
+            int info_status = db.insertComment(idx, email, req.body);
             if (status == 0) { 
                 return gson.toJson(new StructuredResponse("error", "error inserting comment...", null));
             } else {
@@ -290,32 +337,6 @@ public class App {
                 return gson.toJson(new StructuredResponse("error", "unable to delete row " + idx, null));
             } else {
                 return gson.toJson(new StructuredResponse("ok", "" + result, null));
-            }
-        });
-
-        Spark.get("/hello", (req, res) -> {
-            return "Hello World!";
-        });
-
-        //Routing for posting comments 
-
-        Spark.post("/messages/:m_id/comments", (request, response) -> {
-            SimpleRequest req = gson.fromJson(request.body(), SimpleRequest.class);
-
-            // If we can't get an ID, status 500 returned.. 
-            int idx = Integer.parseInt(request.params("m_id"));
-            // ensure status 200 OK, with a MIME type of JSON
-            // NB: even on error, we return 200, but with a JSON object that
-            // describes the error.
-            response.status(200);
-
-            response.type("application/json");
-            // NB: createEntry checks for null title and message
-            int status = db.insertRow(req.mTitle, req.mMessage);
-            if (status == 0) {
-                return gson.toJson(new StructuredResponse("error", "error performing insertion", null));
-            } else {
-                return gson.toJson(new StructuredResponse("ok", "" + status, null));
             }
         });
 

@@ -143,6 +143,7 @@ public class Database {
      * the getDatabase() method.
      */
     private Database() {
+
     }
 
     /**
@@ -185,7 +186,7 @@ public class Database {
         // fail, the whole getDatabase() call should fail
         try {
             // NB: we can easily get ourselves in trouble here by typing the
-            // SQL incorrectly. We really should have things like "tblData"
+            // SQL incorrectly. We really should have things like "messages"
             // as constants, and then build the strings for the statements
             // from those constants.
 
@@ -193,16 +194,16 @@ public class Database {
             // creation/deletion, so multiple executions will cause an exception
             // TODO: change the SQL syntax so it will be able to modify 3 tables
             db.mCreateTable = db.mConnection.prepareStatement(
-                    "CREATE TABLE tblData (id SERIAL PRIMARY KEY, title VARCHAR(50) NOT NULL, message VARCHAR(500) NOT NULL, m_email VARCHAR(50) NOT NULL)");
-            db.mDropTable = db.mConnection.prepareStatement("DROP TABLE tblData");
+                    "CREATE TABLE messages (id SERIAL PRIMARY KEY, title VARCHAR(50) NOT NULL, message VARCHAR(500) NOT NULL, mu_id VARCHAR(50) NOT NULL)");
+            db.mDropTable = db.mConnection.prepareStatement("DROP TABLE messages");
 
             // Standard CRUD operations
-            db.mDeleteOne = db.mConnection.prepareStatement("DELETE FROM tblData WHERE id = ?");
+            db.mDeleteOne = db.mConnection.prepareStatement("DELETE FROM messages WHERE id = ?");
             db.mInsertOne = db.mConnection
-                    .prepareStatement("INSERT INTO tblData VALUES (default, ?, ?, ?) RETURNING id");
-            db.mSelectAll = db.mConnection.prepareStatement("SELECT * FROM tblData");
-            db.mSelectOne = db.mConnection.prepareStatement("SELECT * from tblData WHERE id=?");
-            db.mUpdateOne = db.mConnection.prepareStatement("UPDATE tblData SET message = ? WHERE id = ?");
+                    .prepareStatement("INSERT INTO messages VALUES (default, ?, ?, ?) RETURNING id");
+            db.mSelectAll = db.mConnection.prepareStatement("SELECT * FROM messages");
+            db.mSelectOne = db.mConnection.prepareStatement("SELECT * from messages WHERE id=?");
+            db.mUpdateOne = db.mConnection.prepareStatement("UPDATE messages SET message = ? WHERE id = ?");
             
         
 
@@ -232,26 +233,26 @@ public class Database {
 
         //Comments table initialization 
             db.cCreateTable = db.mConnection.prepareStatement(
-                    "CREATE TABLE comments (id SERIAL PRIMARY KEY, c_id INT, c_message VARCHAR(100) NOT NULL, c_email VARCHAR(50)");
+                    "CREATE TABLE comments (id SERIAL, c_id INT, c_message VARCHAR(100) NOT NULL, cu_id VARCHAR(50), CONSTRAINT cid_id PRIMARY KEY (id,c_id)");
 
             db.cDropTable = db.mConnection.prepareStatement("DROP TABLE comments");
             db.cDeleteOne = db.mConnection.prepareStatement("DELETE FROM comments WHERE id = ?");
             db.cDeleteSingleComment = db.mConnection.prepareStatement("DELETE FROM comments where c_id = ?");
             db.cInsertOne = db.mConnection
-                    .prepareStatement("INSERT INTO comments VALUES (default, ?, ?) RETURNING id");
+                    .prepareStatement("INSERT INTO comments VALUES (default, ?, ?, ?) RETURNING id");
             db.cSelectAll = db.mConnection.prepareStatement("SELECT * FROM linkage");
             db.cSelectOne = db.mConnection.prepareStatement("SELECT * from linkage WHERE id = ?");
 
 
         //Like & Dislike table initialization 
             db.lCreateTable = db.mConnection
-                    .prepareStatement("CREATE TABLE likes (id SERIAL PRIMARY KEY, m_email VARCHAR(50), like BIT, dislike BIT");
+                    .prepareStatement("CREATE TABLE rating (id SERIAL PRIMARY KEY, m_email VARCHAR(50), like BIT, dislike BIT");
 
-            db.lDropTable = db.mConnection.prepareStatement("DROP TABLE likes");
-            db.lDeleteOne = db.mConnection.prepareStatement("DELETE FROM likes WHERE id = ?");
-            db.lInsertOne = db.mConnection.prepareStatement("INSERT INTO likes VALUES (default, ?, ?, ?) RETURNING id");
-            db.lSelectAll = db.mConnection.prepareStatement("SELECT * FROM likes");
-            db.lSelectOne = db.mConnection.prepareStatement("SELECT * from likes WHERE id = ?");
+            db.lDropTable = db.mConnection.prepareStatement("DROP TABLE rating");
+            db.lDeleteOne = db.mConnection.prepareStatement("DELETE FROM rating WHERE id = ?");
+            db.lInsertOne = db.mConnection.prepareStatement("INSERT INTO rating VALUES (default, ?, ?, ?) RETURNING id");
+            db.lSelectAll = db.mConnection.prepareStatement("SELECT * FROM rating");
+            db.lSelectOne = db.mConnection.prepareStatement("SELECT * from rating WHERE id = ?");
 
             
             
@@ -315,36 +316,90 @@ public class Database {
     }
 
 
-    //Inserting a comment into the database. Corresponds with specific id
-    int insertRow(String message) {
-        int count = -1; 
+    int safetyLikeCheck(int m_id, String lu_id) {
         try {
-            cInsertOne.setInt(1, 1); //Set "?" parameter of method cInsertOne
-            cInsertOne.setString(2, message); //Set "?" parameter of method cInsertOne
-            ResultSet res = cInsertOne.getResultSet();
-            if (res.next()) {
-                count = res.getInt(1); //Counts number of rows added
+            Statement stmt = conn.createStatement();
+            ResultSet res = stmt.executeQuery("SELECT m_email, like, dislike FROM rating WHERE m_id = "+m_id+"");
+
+
+         /*
+            While the ResultSet res is gathering all of the tuples returned from the database, 
+            we will iterate through the tuples and find the one that has a matching lu_id with the
+            email registered on the "Rating" table. 
+
+            If lu_id == m_email, then we will begin to check if the like and dislike attributes 
+            are populated. 
+
+            If both are set to '1', then the function will return a -1 indicating a failure. 
+            The function will also decrement the "dislike" to a 0, if the condition above is met. 
+        */
+            while (rs.next()) {
+
+            // create new RowData instance and insert it into ArrayList
+
+                String return_email = rs.getString("m_email");
+                int m_like = rs.getInt("like");
+                int m_dislike = rs.getInt("dislike");
+
+                if (lu_id.equals(return_email)) {
+                    int m_like = rs.getInt("like");
+                    int m_dislike = rs.getInt("dislike");
+                }
+                
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
+            
         }
-        return count; 
     }
 
-    int insertRowInfo(int id, String u_id) {
-        int count = -1; 
+    int addUserInfo(String u_id, int m_id) {
         try {
             Statement stmt = con.createStatement();
-            String check_value = stmt.executeQuery("SELECT COUNT(c_id) FROM linking WHERE id = "+id+"");
-            int holder = parseInt(check_value);
-            lInsertOne.setString(u_id);
-            lInsertOne.setInt(id); 
-            if (holder > 0) {
-                console.log(holder); 
+            String check_value = stmt.executeQuery("SELECT email FROM payload WHERE email = "+u_id+"");
+            int num_comments = parseInt(check_value);
+
+
+    }
+
+
+
+    int insertComment(int id, String cu_id, String c_message) {
+        int count = -1; 
+        int c_id; 
+        try {
+            Statement stmt = con.createStatement();
+            String check_value = stmt.executeQuery("SELECT COUNT(*) FROM comments WHERE id = "+id+"");
+            int num_comments = parseInt(check_value);
+
+        /*
+            Block of code below takes the results from the "check_value" 
+            variable and figures out number of pre-existing comments for the specific 
+            message_id. 
+
+            If for example, Message #3 has 4 comments already in the database...
+            Then when you POST another comment to "/messages/:m_id/comments", 
+            the c_id for that comment would automatically be incremented by one.
+        */
+            if (num_comments > 0) {
+                c_id = num_comments + 1;
+                lInsertOne.setInt(1, c_id);
+                lInsertOne.setString(2, c_message);
+                lInsertOne.setString(3, cu_id);
+                lInsertOne.execute();
                 ResultSet res = lInsertOne.getResultSet();
+                if (res.next()) {
+                    count = res.getInt(1);
+                }
+          } else {
+              c_id = 1;
+              lInsertOne.setInt(1, c_id);
+              lInsertOne.setString(2, c_message);
+              lInsertOne.setString(3, cu_id);
+              ResultSet res = lInsertOne.getResultSet();
+              if (res.next()) {
+                  count = res.getInt(1);
+              }
+          }
 
-
-            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -361,9 +416,9 @@ public class Database {
         try {
             ResultSet rs = mSelectAll.executeQuery();
             while (rs.next()) {
-                // create new RowData instance and insert it into ArrayList
+            // create new RowData instance and insert it into ArrayList
                 res.add(new RowData(rs.getInt("id"), rs.getString("title"), rs.getString("message"), rs.getInt("likes"),
-                        rs.getInt("dislikes"), rs.getDate("date")));
+                rs.getInt("dislikes"), rs.getDate("date")));
             }
             rs.close();
             return res;
@@ -414,6 +469,16 @@ public class Database {
         return res;
     }
 
+    int deleteRow(int id) {
+        int res = -1;
+        try {
+            mDeleteOne.setInt(1, id);
+            res += mDeleteOne.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
     /**
      * Update the message for a row in the database
      * 
@@ -469,7 +534,7 @@ public class Database {
     }
 
     /**
-     * Create tblData. If it already exists, this will print an error
+     * Create messages. If it already exists, this will print an error
      */
     void createTable() {
         try {
@@ -484,7 +549,7 @@ public class Database {
 
 
     /**
-     * Remove tblData from the database. If it does not exist, this will print an
+     * Remove messages from the database. If it does not exist, this will print an
      * error.
      */
     void dropTable() {

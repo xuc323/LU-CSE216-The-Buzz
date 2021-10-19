@@ -18,6 +18,7 @@ import com.google.api.client.auth.openidconnect.IdToken;
 import com.google.api.client.auth.openidconnect.IdTokenVerifier;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.json.JsonFactory;
+import com.google.api.client.extensions.appengine.http.UrlFetchTransport;
 import com.google.api.client.util.Clock;
 import com.google.api.client.util.Preconditions;
 import java.io.IOException;
@@ -82,15 +83,14 @@ public class App {
             Spark.staticFiles.externalLocation(static_location_override);
         }
 
-        HttpRequestFactory example = new HttpRequestFactory createRequestFactory()
-        JsonFactory example2 = new JsonFactory createJsonObjectParser();
-
         GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(example, example2)
                 // Specify the CLIENT_ID of the app that accesses the backend:
                 .setAudience(Collections.singletonList(CLIENT_ID))
                 // Or, if multiple clients access the backend:
                 // .setAudience(Arrays.asList(CLIENT_ID_1, CLIENT_ID_2, CLIENT_ID_3))
+                .setIssuer("https://accounts.google.com");
                 .build();
+
 
         // (Receive idTokenString by HTTPS POST)
         Spark.post("/login", (request, response) -> {

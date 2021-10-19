@@ -193,19 +193,16 @@ public class Database {
             // creation/deletion, so multiple executions will cause an exception
             // TODO: change the SQL syntax so it will be able to modify 3 tables
             db.mCreateTable = db.mConnection.prepareStatement(
-                    "CREATE TABLE tblData (id SERIAL PRIMARY KEY, title VARCHAR(50) NOT NULL, message VARCHAR(500) NOT NULL, likes INT NOT NULL, dislikes INT NOT NULL, date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP)");
+                    "CREATE TABLE tblData (id SERIAL PRIMARY KEY, title VARCHAR(50) NOT NULL, message VARCHAR(500) NOT NULL, m_email VARCHAR(50) NOT NULL)");
             db.mDropTable = db.mConnection.prepareStatement("DROP TABLE tblData");
 
             // Standard CRUD operations
             db.mDeleteOne = db.mConnection.prepareStatement("DELETE FROM tblData WHERE id = ?");
             db.mInsertOne = db.mConnection
-                    .prepareStatement("INSERT INTO tblData VALUES (default, ?, ?, 0, 0, default) RETURNING id");
+                    .prepareStatement("INSERT INTO tblData VALUES (default, ?, ?, ?) RETURNING id");
             db.mSelectAll = db.mConnection.prepareStatement("SELECT * FROM tblData");
             db.mSelectOne = db.mConnection.prepareStatement("SELECT * from tblData WHERE id=?");
             db.mUpdateOne = db.mConnection.prepareStatement("UPDATE tblData SET message = ? WHERE id = ?");
-            db.mUpdateOneLikes = db.mConnection.prepareStatement("UPDATE tblData SET likes = likes + 1 WHERE id = ?");
-            db.mUpdateOneDislikes = db.mConnection
-                    .prepareStatement("UPDATE tblData SET dislikes = dislikes + 1 WHERE id = ?");
             
         
 
@@ -233,19 +230,20 @@ public class Database {
          *             Table 4: Comment information (No User Data) 
         */ 
 
-            //Linking table initialization 
+        //Linking table initialization 
             db.lCreateTable = db.mConnection.prepareStatement(
-                    "CREATE TABLE linkage (id SERIAL PRIMARY KEY, email VARCHAR(30), c_id INT, ");
+                    "CREATE TABLE comments (id SERIAL PRIMARY KEY, c_id INT, c_message VARCHAR(100) NOT NULL, c_email VARCHAR(50)");
 
-            db.lDropTable = db.mConnection.prepareStatement("DROP TABLE linkage");
-            db.lDeleteOne = db.mConnection.prepareStatement("DELETE FROM linkage WHERE id = ?");
+            db.lDropTable = db.mConnection.prepareStatement("DROP TABLE comments");
+            db.lDeleteOne = db.mConnection.prepareStatement("DELETE FROM comments WHERE id = ?");
+            db.lDeleteSingleComment = db.mConnection.prepareStatement("DELETE FROM comments where c_id = ?");
             db.lInsertOne = db.mConnection
-                    .prepareStatement("INSERT INTO payload VALUES (default, ?, ?) RETURNING id");
+                    .prepareStatement("INSERT INTO comments VALUES (default, ?, ?) RETURNING id");
             db.lSelectAll = db.mConnection.prepareStatement("SELECT * FROM linkage");
             db.lSelectOne = db.mConnection.prepareStatement("SELECT * from linkage WHERE id = ?");
 
 
-            //Comments table initialization 
+        //Comments table initialization 
             db.cCreateTable = db.mConnection
                     .prepareStatement("CREATE TABLE comments (id SERIAL PRIMARY KEY, c_id INT, c_message VARCHAR(500)");
 
@@ -254,6 +252,7 @@ public class Database {
             db.cInsertOne = db.mConnection.prepareStatement("INSERT INTO comments VALUES (default, ?, ?) RETURNING id");
             db.cSelectAll = db.mConnection.prepareStatement("SELECT * FROM linkage");
             db.cSelectOne = db.mConnection.prepareStatement("SELECT * from linkage WHERE id = ?");
+
             
             
         } catch (SQLException e) {
@@ -338,10 +337,13 @@ public class Database {
             Statement stmt = con.createStatement();
             String check_value = stmt.executeQuery("SELECT COUNT(c_id) FROM linking WHERE id = "+id+"");
             int holder = parseInt(check_value);
-            lInsertOne.set
+            lInsertOne.setString(u_id);
+            lInsertOne.setInt(id); 
             if (holder > 0) {
                 console.log(holder); 
                 ResultSet res = lInsertOne.getResultSet();
+
+
             }
         } catch (SQLException e) {
             e.printStackTrace();

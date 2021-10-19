@@ -230,28 +230,28 @@ public class Database {
          *             Table 4: Comment information (No User Data) 
         */ 
 
-        //Linking table initialization 
-            db.lCreateTable = db.mConnection.prepareStatement(
+        //Comments table initialization 
+            db.cCreateTable = db.mConnection.prepareStatement(
                     "CREATE TABLE comments (id SERIAL PRIMARY KEY, c_id INT, c_message VARCHAR(100) NOT NULL, c_email VARCHAR(50)");
 
-            db.lDropTable = db.mConnection.prepareStatement("DROP TABLE comments");
-            db.lDeleteOne = db.mConnection.prepareStatement("DELETE FROM comments WHERE id = ?");
-            db.lDeleteSingleComment = db.mConnection.prepareStatement("DELETE FROM comments where c_id = ?");
-            db.lInsertOne = db.mConnection
+            db.cDropTable = db.mConnection.prepareStatement("DROP TABLE comments");
+            db.cDeleteOne = db.mConnection.prepareStatement("DELETE FROM comments WHERE id = ?");
+            db.cDeleteSingleComment = db.mConnection.prepareStatement("DELETE FROM comments where c_id = ?");
+            db.cInsertOne = db.mConnection
                     .prepareStatement("INSERT INTO comments VALUES (default, ?, ?) RETURNING id");
-            db.lSelectAll = db.mConnection.prepareStatement("SELECT * FROM linkage");
-            db.lSelectOne = db.mConnection.prepareStatement("SELECT * from linkage WHERE id = ?");
-
-
-        //Comments table initialization 
-            db.cCreateTable = db.mConnection
-                    .prepareStatement("CREATE TABLE comments (id SERIAL PRIMARY KEY, c_id INT, c_message VARCHAR(500)");
-
-            db.cDropTable = db.mConnection.prepareStatement("DROP TABLE linkage");
-            db.cDeleteOne = db.mConnection.prepareStatement("DELETE FROM linkage WHERE id = ?");
-            db.cInsertOne = db.mConnection.prepareStatement("INSERT INTO comments VALUES (default, ?, ?) RETURNING id");
             db.cSelectAll = db.mConnection.prepareStatement("SELECT * FROM linkage");
             db.cSelectOne = db.mConnection.prepareStatement("SELECT * from linkage WHERE id = ?");
+
+
+        //Like & Dislike table initialization 
+            db.lCreateTable = db.mConnection
+                    .prepareStatement("CREATE TABLE likes (id SERIAL PRIMARY KEY, m_email VARCHAR(50), like BIT, dislike BIT");
+
+            db.lDropTable = db.mConnection.prepareStatement("DROP TABLE likes");
+            db.lDeleteOne = db.mConnection.prepareStatement("DELETE FROM likes WHERE id = ?");
+            db.lInsertOne = db.mConnection.prepareStatement("INSERT INTO likes VALUES (default, ?, ?, ?) RETURNING id");
+            db.lSelectAll = db.mConnection.prepareStatement("SELECT * FROM likes");
+            db.lSelectOne = db.mConnection.prepareStatement("SELECT * from likes WHERE id = ?");
 
             
             

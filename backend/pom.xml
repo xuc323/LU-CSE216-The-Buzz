@@ -38,6 +38,18 @@
     <!-- pom.xml -->
 
     <dependency>
+      <groupId>com.google.oauth-client</groupId>
+      <artifactId>google-oauth-client</artifactId>
+      <version>1.30.4</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.google.api-client</groupId>
+      <artifactId>google-api-client-jackson2</artifactId>
+      <version>1.20.0</version>
+    </dependency>
+
+    <dependency>
       <groupId>com.auth0</groupId>
       <artifactId>mvc-auth-commons</artifactId>
       <version>[1.0, 2.0)</version>

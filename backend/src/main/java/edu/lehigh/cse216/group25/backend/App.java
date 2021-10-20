@@ -7,6 +7,8 @@ import spark.Spark;
 // Import Google's JSON library
 import com.google.gson.*;
 
+import org.eclipse.jetty.util.IO;
+
 import java.util.Collections;
 // Import map to get env variables
 import java.util.Map;
@@ -14,19 +16,14 @@ import java.util.Map;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken.Payload;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
-import com.google.api.client.auth.openidconnect.IdToken;
-import com.google.api.client.auth.openidconnect.IdTokenVerifier;
+
 import com.google.api.client.http.HttpTransport;
+import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
-import com.google.api.client.extensions.appengine.http.UrlFetchTransport;
-import com.google.api.client.util.Clock;
-import com.google.api.client.util.Preconditions;
-import java.io.IOException;
+import com.google.api.client.json.jackson2.JacksonFactory;
+
 import java.security.GeneralSecurityException;
-import java.security.PublicKey;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.io.IOException;
 
 /**
  * For now, our app creates an HTTP server with only one route.
@@ -52,7 +49,17 @@ public class App {
             Defining our constants... CLIENT_WEB and CLIENT_ANDROID
 
         */ 
-        const CLIENT_ID = "496410238969-mvosj73q4tnp1dumhbpfbucato5ner3k.apps.googleusercontent.com";
+        final String CLIENT_ID = "496410238969-mvosj73q4tnp1dumhbpfbucato5ner3k.apps.googleusercontent.com";
+        final String CLIENT_SECRET = "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";
+        final String ID_TOKEN = "eyJhbGciOiJSUzI1NiIsImtpZCI6ImFkZDhjMGVlNjIzOTU0NGFmNTNmOTM3MTJhNTdiMmUyNmY5NDMzNTIiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJuYmYiOjE2MzQ2ODU2MjQsImF1ZCI6IjQ5NjQxMDIzODk2OS1tdm9zajczcTR0bnAxZHVtaGJwZmJ1Y2F0bzVuZXIzay5hcHBzLmdvb2dsZXVzZXJjb250ZW50LmNvbSIsInN1YiI6IjEwODYzMDc0MjM0MDUxMzE4MDg5NiIsImVtYWlsIjoidGJ6MjE2MDI1QGdtYWlsLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJhenAiOiI0OTY0MTAyMzg5NjktbXZvc2o3M3E0dG5wMWR1bWhicGZidWNhdG81bmVyM2suYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJuYW1lIjoiQnV6eiBUaGUiLCJwaWN0dXJlIjoiaHR0cHM6Ly9saDMuZ29vZ2xldXNlcmNvbnRlbnQuY29tL2EvQUFUWEFKeFZLNlEzb2V3d25DTjRoV3Q5TUw2eUtYYVZqcTRCTGE4eW5WMWM9czk2LWMiLCJnaXZlbl9uYW1lIjoiQnV6eiIsImZhbWlseV9uYW1lIjoiVGhlIiwiaWF0IjoxNjM0Njg1OTI0LCJleHAiOjE2MzQ2ODk1MjQsImp0aSI6ImZhNWFkOGRjMzBmZTg2ZGYzNjViODNkMzVjZDg3M2M3Yzc1NjVjMjYifQ.CK7HXCOnaUBYf-YQ2p2SH4mYudBK9SXkZQa8d4zGB_vZv6jJbXrOANJqwOKf08uPfMbSMfavMsNq-APNhAFklwcIeT35mG7OhW4rIURYoWJpZCKg-jmeKMG1JcGEI0wok3eROvk3YsPW7tHwkM1PDhqkw4tW4KrB0LtIs2eLjWjwvPQfo4Z_gdtRwCptu5qaX333Dv7vu-_LVF0ODbnmn_gZQ7Iww_hjALPAq0zxtQibS8KtV0rFbA9evbgttRxY3QwoN_djvbRJCweMhnALcY73l-2oCDf189m5-DMzKIv64oAByUvUO0f2Ey1W2M3F1AUWq2Ax6wdzA_PpLKMMnQ";
+        HttpTransport transport = new com.google.api.client.http.javanet.NetHttpTransport();
+        final HttpTransport transport2 = new NetHttpTransport();
+        final JsonFactory jsonFactory = new JacksonFactory();
+        
+        
+
+        
+
 
         // Get the port on which to listen for requests
         Spark.port(getIntFromEnv("PORT", 4567));
@@ -88,13 +95,13 @@ public class App {
         CORS Coding: Enabling Cross-Server-Access. Important to connect the Android application
         to our pre-existing Frontend/Backend
     */
-        String cors_enabled = env.get("CORS_ENABLED");
-        if (cors_enabled.equals("True")) {
-            final String acceptCrossOriginRequestsFrom = "*";
-            final String acceptedCrossOriginRoutes = "GET,PUT,POST,DELETE,OPTIONS";
-            final String supportedRequestHeaders = "Content-Type,Authorization,X-Requested-With,Content-Length,Accept,Origin";
-            enableCORS(acceptCrossOriginRequestsFrom, acceptedCrossOriginRoutes, supportedRequestHeaders);
-        }
+        // String cors_enabled = env.get("CORS_ENABLED");
+        // if (cors_enabled.equals("True")) {
+        //     final String acceptCrossOriginRequestsFrom = "*";
+        //     final String acceptedCrossOriginRoutes = "GET,PUT,POST,DELETE,OPTIONS";
+        //     final String supportedRequestHeaders = "Content-Type,Authorization,X-Requested-With,Content-Length,Accept,Origin";
+        //     //enableCORS(acceptCrossOriginRequestsFrom, acceptedCrossOriginRoutes, supportedRequestHeaders);
+        // }
 
         /*
         * Set up CORS headers for the OPTIONS verb, and for every response that the
@@ -105,64 +112,51 @@ public class App {
         * @param headers The headers that can be sent with a request from the above
         *                origin
         */
-        private static void enableCORS(String origin, String methods, String headers) {
-            // Create an OPTIONS route that reports the allowed CORS headers and methods
-            Spark.options("/*", (request, response) -> {
-                String accessControlRequestHeaders = request.headers("Access-Control-Request-Headers");
-                if (accessControlRequestHeaders != null) {
-                    response.header("Access-Control-Allow-Headers", accessControlRequestHeaders);
-                }
-                String accessControlRequestMethod = request.headers("Access-Control-Request-Method");
-                if (accessControlRequestMethod != null) {
-                    response.header("Access-Control-Allow-Methods", accessControlRequestMethod);
-                }
-                return "OK";
-            });
+        // private static void enableCORS(String origin, String methods, String headers) {
+        //     // Create an OPTIONS route that reports the allowed CORS headers and methods
+        //     Spark.options("/*", (request, response) -> {
+        //         String accessControlRequestHeaders = request.headers("Access-Control-Request-Headers");
+        //         if (accessControlRequestHeaders != null) {
+        //             response.header("Access-Control-Allow-Headers", accessControlRequestHeaders);
+        //         }
+        //         String accessControlRequestMethod = request.headers("Access-Control-Request-Method");
+        //         if (accessControlRequestMethod != null) {
+        //             response.header("Access-Control-Allow-Methods", accessControlRequestMethod);
+        //         }
+        //         return "OK";
+        //     });
 
             // 'before' is a decorator, which will run before any 
             // get/post/put/delete.  In our case, it will put three extra CORS
             // headers into the response
-            Spark.before((request, response) -> {
-                response.header("Access-Control-Allow-Origin", origin);
-                response.header("Access-Control-Request-Method", methods);
-                response.header("Access-Control-Allow-Headers", headers);
-            });
-        }
-
-        GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(HttpTransport transport, JsonFactory Jsonfactory)
-                // Specify the CLIENT_ID of the app that accesses the backend:
-                .setAudience(Collections.singletonList(CLIENT_ID))
-                // Or, if multiple clients access the backend:
-                // .setAudience(Arrays.asList(CLIENT_ID_1, CLIENT_ID_2, CLIENT_ID_3))
-                .setIssuer("https://accounts.google.com");
-                .build();
-
-
+            // Spark.before((request, response) -> {
+            //     response.header("Access-Control-Allow-Origin", origin);
+            //     response.header("Access-Control-Request-Method", methods);
+            //     response.header("Access-Control-Allow-Headers", headers);
+            // });
+        
+            
         // (Receive idTokenString by HTTPS POST)
         Spark.post("/login", (request, response) -> {
 
-            GoogleIdToken idToken = verifier.verify(request.body);
-            if (idToken != null) {
-                Payload payload = idToken.getPayload();
+            SimpleRequest res = gson.fromJson(request.body(), SimpleRequest.class);
+            try { 
+                GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(transport, jsonFactory)
+                        // Specify the CLIENT_ID of the app that accesses the backend:
+                        .setAudience(Collections.singletonList(CLIENT_ID))
+                        .build();
 
-            // Print user identifier
-                // String userId = payload.getSubject();
-                // System.out.println("User ID: " + userId);
+                GoogleIdToken idToken = verifier.verify(res.id_token);
+                if (idToken != null) {
+                    Payload payload = idToken.getPayload();
+
 
             // Get profile information from payload
                 String email = payload.getEmail();
-                Boolean check_email = email.contains("@lehigh.edu");
+                System.out.println(email);
 
-                if (check_email = true) {
-                    
-                }
-
-                
                 String name = (String) payload.get("name");
                 String pictureUrl = (String) payload.get("picture");
-                String locale = (String) payload.get("locale");
-                String familyName = (String) payload.get("family_name");
-                String givenName = (String) payload.get("given_name");
 
             /*
                 Input new user information in database. 
@@ -173,8 +167,14 @@ public class App {
 
             } else {
                 System.out.println("Invalid ID token.");
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
+            return gson.toJson(new StructuredResponse("ok", "200", null));
+            
 
         });
     
@@ -188,6 +188,16 @@ public class App {
             res.redirect("/index.html");
             return "";
         });
+
+        // Spark.get("/user", (request, response) -> {
+
+        //     db.oSelectOne(id)
+        //     if (data == null) {
+        //         return gson.toJson(new StructuredResponse("error", idx + " not found", null));
+        //     } else {
+        //         return gson.toJson(new StructuredResponse("ok", null, data));
+        //     }
+        // });
 
 
 
@@ -228,7 +238,7 @@ public class App {
         Spark.post("/messages", (request, response) -> {
             // NB: if gson.Json fails, Spark will reply with status 500 Internal
             // Server Error
-            const SESSION_KEY = request.queryParams("session_key");
+            final String SESSION_KEY = request.queryParams("session_key");
             SimpleRequest req = gson.fromJson(request.body(), SimpleRequest.class);
             // ensure status 200 OK, with a MIME type of JSON
             // NB: even on error, we return 200, but with a JSON object that
@@ -244,19 +254,32 @@ public class App {
             }
         });
 
-        Spark.post("/messages/:m_id/comments", (request, response) -> {
-            SimpleRequest req = gson.fromJson(request.body(), SimpleRequest.class);
-            int idx = Integer.parseInt(request.params("m_id"));
-            response.status(200); 
-            response.type("application/json");
+        // Spark.post("/messages/:m_id/comments", (request, response) -> {
+        //     SimpleRequest req = gson.fromJson(request.body(), SimpleRequest.class);
+        //     int idx = Integer.parseInt(request.params("m_id"));
+        //     response.status(200); 
+        //     response.type("application/json");
 
-            //Only pass the message body into the specific message id you want to make a comment for 
-            int status = db.insertRow(req.mMessage); 
-            int info_status = db.insertComment(idx, email, req.body);
-            if (status == 0) { 
-                return gson.toJson(new StructuredResponse("error", "error inserting comment...", null));
+        //     //Only pass the message body into the specific message id you want to make a comment for  
+        //     int status = db.insertComment(idx, email, request.body());
+        //     if (status == 0) { 
+        //         return gson.toJson(new StructuredResponse("error", "error inserting comment...", null));
+        //     } else {
+        //         return gson.toJson(new StructuredResponse("ok", "" + status, null));
+        //     }
+        // });
+
+        Spark.get("/messages/:m_id/comments/:c_id", (request, response) -> {
+            int idx = Integer.parseInt(request.params("m_id"));
+            int idc = Integer.parseInt(request.params("c_id"));
+            // ensure status 200 OK, with a MIME type of JSON
+            response.status(200);
+            response.type("application/json");
+            Database.RowData data = db.selectOne(idx);
+            if (data == null) {
+                return gson.toJson(new StructuredResponse("error", idx + " not found", null));
             } else {
-                return gson.toJson(new StructuredResponse("ok", "" + status, null));
+                return gson.toJson(new StructuredResponse("ok", null, data));
             }
         });
 

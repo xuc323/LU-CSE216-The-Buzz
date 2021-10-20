@@ -1,15 +1,18 @@
-package src.main.java.edu.lehigh.cse216.group25.backend;
+package edu.lehigh.cse216.group25.backend;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.lang.reflect.Array;
 import java.net.URI;
 import java.net.URISyntaxException;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class Database {
     /**
@@ -18,61 +21,49 @@ public class Database {
      */
     private Connection mConnection;
 
-    /**
-     * A prepared statement for getting all data in the database
-     */
+
+    //PREPARED STATEMENTS FOR THE MESSAGES TABLE
     private PreparedStatement mSelectAll;
-
-    /**
-     * A prepared statement for getting one row from the database
-     */
     private PreparedStatement mSelectOne;
-
-    /**
-     * A prepared statement for deleting a row from the database
-     */
     private PreparedStatement mDeleteOne;
-
-    /**
-     * A prepared statement for inserting into the database
-     */
     private PreparedStatement mInsertOne;
-
-    /**
-     * A prepared statement for updating a single row in the database
-     */
     private PreparedStatement mUpdateOne;
-
-    /**
-     * A prepared statement for updating likes in the database
-     */
     private PreparedStatement mUpdateOneLikes;
-
-    /**
-     * A prepared statement for updating dislikes in the database
-     */
     private PreparedStatement mUpdateOneDislikes;
-    /**
-     * A prepared statement for creating the table in our database
-     */
     private PreparedStatement mCreateTable;
-
-    /**
-     * A prepared statement for dropping the table in our database
-     */
     private PreparedStatement mDropTable;
 
+    //PREPARED STATEMENTS FOR THE USER TABLE
     private PreparedStatement oCreateTable; 
-
     private PreparedStatement oDropTable; 
-
     private PreparedStatement oSelectAll;
-
     private PreparedStatement oSelectOne;
-
     private PreparedStatement oDeleteOne;
-
     private PreparedStatement oInsertOne;
+
+    //PREPARED STATEMENTS FOR THE RATING TABLE
+    private PreparedStatement lCreateTable;
+    private PreparedStatement lDropTable;
+    private PreparedStatement lSelectAll;
+    private PreparedStatement lSelectOne;
+    private PreparedStatement lDeleteOne;
+    private PreparedStatement lInsertOne;
+
+    //PREPARED STATEMENTS FOR THE COMMENTS TABLE
+    private PreparedStatement cCreateTable;
+    private PreparedStatement cDropTable;
+    private PreparedStatement cSelectAll;
+    private PreparedStatement cSelectOne;
+    private PreparedStatement cDeleteOne;
+    private PreparedStatement cInsertOne;
+    private PreparedStatement cDeleteSingleComment;
+
+
+    private PreparedStatement checkUser; 
+    private PreparedStatement checkRating; 
+//End prepared statements ----------------------------------------------------
+
+
 
     /**
      * RowData is like a struct in C: we use it to hold data, and we allow direct
@@ -85,38 +76,14 @@ public class Database {
      * coupled: if one changes, the other should too.
      */
     public static class RowData {
-        /**
-         * The ID of this row of the database
-         */
+
         int mId;
-
-        /**
-         * The title stored in this row
-         */
         String mTitle;
-
-        /**
-         * The message stored in this row
-         */
         String mMessage;
-
-        /**
-         * The number of likes
-         */
-
         int mLikes;
-
-        /**
-         * The number of dislikes
-         */
-
         int mDislikes;
-
-        /**
-         * Date created the post
-         */
-
         Date mDate;
+        CommentList mComments; 
 
         /**
          * Construct a RowData object by providing values for its fields
@@ -192,7 +159,6 @@ public class Database {
 
             // Note: no "IF NOT EXISTS" or "IF EXISTS" checks on table
             // creation/deletion, so multiple executions will cause an exception
-            // TODO: change the SQL syntax so it will be able to modify 3 tables
             db.mCreateTable = db.mConnection.prepareStatement(
                     "CREATE TABLE messages (id SERIAL PRIMARY KEY, title VARCHAR(50) NOT NULL, message VARCHAR(500) NOT NULL, mu_id VARCHAR(50) NOT NULL)");
             db.mDropTable = db.mConnection.prepareStatement("DROP TABLE messages");
@@ -212,24 +178,14 @@ public class Database {
          * (Primary Key) - First Name - Last Name - Email_Verified - Locale
          */ 
             db.oCreateTable = db.mConnection.prepareStatement(
-                    "CREATE TABLE payload (email VARCHAR(30) PRIMARY KEY, first_name VARCHAR(15), last_name VARCHAR(20), picture_url VARCHAR(50))");
+                    "CREATE TABLE payload (email VARCHAR(30) PRIMARY KEY, name VARCHAR(50), picture_url VARCHAR(50))");
             db.oDropTable = db.mConnection.prepareStatement("DROP TABLE payload");
             db.oDeleteOne = db.mConnection.prepareStatement("DELETE FROM payload WHERE email = ?");
             db.oInsertOne = db.mConnection
-                    .prepareStatement("INSERT INTO payload VALUES (default, ?, ?, default, default) RETURNING email");
+                    .prepareStatement("INSERT INTO payload VALUES (?, ?, ?) RETURNING email");
             db.oSelectAll = db.mConnection.prepareStatement("SELECT * FROM payload");
             db.oSelectOne = db.mConnection.prepareStatement("SELECT * from payload WHERE email=?");
 
-        /*
-         * You need to define a database table that returns a list of all users registered to
-         *  the database, and also a table that connects a user existing in the "payload"
-         * table to a specific id. You are also able to add comments to the table as well. 
-         * 
-         * Conclusion: Table 1: Message information (No User Data)
-         *             Table 2: User information (No Message Data)
-         *             Table 3: Email + Message_ID + Comment_ID 
-         *             Table 4: Comment information (No User Data) 
-        */ 
 
         //Comments table initialization 
             db.cCreateTable = db.mConnection.prepareStatement(
@@ -244,7 +200,7 @@ public class Database {
             db.cSelectOne = db.mConnection.prepareStatement("SELECT * from linkage WHERE id = ?");
 
 
-        //Like & Dislike table initialization 
+        //Rating table initialization 
             db.lCreateTable = db.mConnection
                     .prepareStatement("CREATE TABLE rating (id SERIAL PRIMARY KEY, m_email VARCHAR(50), like BIT, dislike BIT");
 
@@ -253,6 +209,14 @@ public class Database {
             db.lInsertOne = db.mConnection.prepareStatement("INSERT INTO rating VALUES (default, ?, ?, ?) RETURNING id");
             db.lSelectAll = db.mConnection.prepareStatement("SELECT * FROM rating");
             db.lSelectOne = db.mConnection.prepareStatement("SELECT * from rating WHERE id = ?");
+
+
+        //Additional SQL queries to get more information 
+            db.checkUser = db.mConnection.prepareStatement(
+                "SELECT COUNT(*) FROM payload WHERE email = ?");
+
+            db.checkRating = db.mConnection.prepareStatement(
+                "SELECT m_email, like, dislike FROM rating WHERE m_id = ?");
 
             
             
@@ -317,9 +281,12 @@ public class Database {
 
 
     int safetyLikeCheck(int m_id, String lu_id) {
+        int m_like = 0;
+        int m_dislike = 0; 
         try {
-            Statement stmt = conn.createStatement();
-            ResultSet res = stmt.executeQuery("SELECT m_email, like, dislike FROM rating WHERE m_id = "+m_id+"");
+            
+            mInsertOne.setInt(1, m_id);
+            ResultSet rs = checkRating.getResultSet(); 
 
 
          /*
@@ -338,26 +305,29 @@ public class Database {
             // create new RowData instance and insert it into ArrayList
 
                 String return_email = rs.getString("m_email");
-                int m_like = rs.getInt("like");
-                int m_dislike = rs.getInt("dislike");
 
                 if (lu_id.equals(return_email)) {
-                    int m_like = rs.getInt("like");
-                    int m_dislike = rs.getInt("dislike");
+                    m_like = rs.getInt("like");
+                    m_dislike = rs.getInt("dislike");
                 }
-                
             }
+
+            System.out.println(m_like);
+            System.out.println(m_dislike);
             
+
+            return 0; 
+            
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
+        return 1; 
     }
+    
 
-    int addUserInfo(String u_id, int m_id) {
-        try {
-            Statement stmt = con.createStatement();
-            String check_value = stmt.executeQuery("SELECT email FROM payload WHERE email = "+u_id+"");
-            int num_comments = parseInt(check_value);
-
-
+    int addUserInfo(String u_id, String name, String pic_url) {
+        //Insert information about the user... 
+        return 0; 
     }
 
 
@@ -366,9 +336,7 @@ public class Database {
         int count = -1; 
         int c_id; 
         try {
-            Statement stmt = con.createStatement();
-            String check_value = stmt.executeQuery("SELECT COUNT(*) FROM comments WHERE id = "+id+"");
-            int num_comments = parseInt(check_value);
+            int num_comments = 0; 
 
         /*
             Block of code below takes the results from the "check_value" 
@@ -419,14 +387,17 @@ public class Database {
             // create new RowData instance and insert it into ArrayList
                 res.add(new RowData(rs.getInt("id"), rs.getString("title"), rs.getString("message"), rs.getInt("likes"),
                 rs.getInt("dislikes"), rs.getDate("date")));
+
+                
             }
             rs.close();
             return res;
         } catch (SQLException e) {
             e.printStackTrace();
-            return null;
+            return new ArrayList<>();
         }
     }
+
 
     /**
      * Get all data for a specific row, by ID
@@ -458,17 +429,6 @@ public class Database {
      * 
      * @return The number of rows that were deleted. -1 indicates an error.
      */
-    int deleteRow(int id) {
-        int res = -1;
-        try {
-            mDeleteOne.setInt(1, id);
-            res += mDeleteOne.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return res;
-    }
-
     int deleteRow(int id) {
         int res = -1;
         try {

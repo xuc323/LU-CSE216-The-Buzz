@@ -55,3 +55,7 @@ Table 3: Comments
 
 Table 4: Rating (Likes and Dislikes)
 - includes: email, likes, dislikes, id
+
+### Review & Documentation of Teammates' Tests ###
+* Frontend Tests (Xu):
+In Xu's Post.test.js, he tests if he can add the elements in HTML using react-dom. In User.Test.js, he is testing if the login button is there and sends it to the google authorization screen.

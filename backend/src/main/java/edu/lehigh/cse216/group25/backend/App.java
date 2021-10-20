@@ -7,8 +7,6 @@ import spark.Spark;
 // Import Google's JSON library
 import com.google.gson.*;
 
-import org.eclipse.jetty.util.IO;
-
 import java.util.Collections;
 // Import map to get env variables
 import java.util.Map;
@@ -52,8 +50,7 @@ public class App {
         final String CLIENT_ID = "496410238969-mvosj73q4tnp1dumhbpfbucato5ner3k.apps.googleusercontent.com";
         final String CLIENT_SECRET = "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";
         final String ID_TOKEN = "eyJhbGciOiJSUzI1NiIsImtpZCI6ImFkZDhjMGVlNjIzOTU0NGFmNTNmOTM3MTJhNTdiMmUyNmY5NDMzNTIiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJuYmYiOjE2MzQ2ODU2MjQsImF1ZCI6IjQ5NjQxMDIzODk2OS1tdm9zajczcTR0bnAxZHVtaGJwZmJ1Y2F0bzVuZXIzay5hcHBzLmdvb2dsZXVzZXJjb250ZW50LmNvbSIsInN1YiI6IjEwODYzMDc0MjM0MDUxMzE4MDg5NiIsImVtYWlsIjoidGJ6MjE2MDI1QGdtYWlsLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJhenAiOiI0OTY0MTAyMzg5NjktbXZvc2o3M3E0dG5wMWR1bWhicGZidWNhdG81bmVyM2suYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJuYW1lIjoiQnV6eiBUaGUiLCJwaWN0dXJlIjoiaHR0cHM6Ly9saDMuZ29vZ2xldXNlcmNvbnRlbnQuY29tL2EvQUFUWEFKeFZLNlEzb2V3d25DTjRoV3Q5TUw2eUtYYVZqcTRCTGE4eW5WMWM9czk2LWMiLCJnaXZlbl9uYW1lIjoiQnV6eiIsImZhbWlseV9uYW1lIjoiVGhlIiwiaWF0IjoxNjM0Njg1OTI0LCJleHAiOjE2MzQ2ODk1MjQsImp0aSI6ImZhNWFkOGRjMzBmZTg2ZGYzNjViODNkMzVjZDg3M2M3Yzc1NjVjMjYifQ.CK7HXCOnaUBYf-YQ2p2SH4mYudBK9SXkZQa8d4zGB_vZv6jJbXrOANJqwOKf08uPfMbSMfavMsNq-APNhAFklwcIeT35mG7OhW4rIURYoWJpZCKg-jmeKMG1JcGEI0wok3eROvk3YsPW7tHwkM1PDhqkw4tW4KrB0LtIs2eLjWjwvPQfo4Z_gdtRwCptu5qaX333Dv7vu-_LVF0ODbnmn_gZQ7Iww_hjALPAq0zxtQibS8KtV0rFbA9evbgttRxY3QwoN_djvbRJCweMhnALcY73l-2oCDf189m5-DMzKIv64oAByUvUO0f2Ey1W2M3F1AUWq2Ax6wdzA_PpLKMMnQ";
-        HttpTransport transport = new com.google.api.client.http.javanet.NetHttpTransport();
-        final HttpTransport transport2 = new NetHttpTransport();
+        final HttpTransport transport = new NetHttpTransport();
         final JsonFactory jsonFactory = new JacksonFactory();
         
         
@@ -157,6 +154,8 @@ public class App {
 
                 String name = (String) payload.get("name");
                 String pictureUrl = (String) payload.get("picture");
+
+                System.out.println(name + " : " + pictureUrl);
 
             /*
                 Input new user information in database. 

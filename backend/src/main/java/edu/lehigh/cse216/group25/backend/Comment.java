@@ -14,12 +14,15 @@ public class Comment {
 
     int cId;
 
-    public Comment(String body, String u_id, int comment_id) {
+    public void setComment(String body, String u_id, int comment_id) {
         cMessage = body;
 
         user = u_id;
-        
+
         cId = comment_id;
     }
     
 }
+
+
+

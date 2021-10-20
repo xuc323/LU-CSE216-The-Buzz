@@ -61,7 +61,30 @@ public class Database {
 
     private PreparedStatement checkUser; 
     private PreparedStatement checkRating; 
+    private PreparedStatement getAllComMessage;
+
+
+    private PreparedStatement getAllLikes;
+
+
+    private PreparedStatement getAllDislikes;
+
+
+    private PreparedStatement getAllMessageUser;
+
+
+
+
+
+
+
+
+
+
+
 //End prepared statements ----------------------------------------------------
+
+
 
 
 
@@ -202,7 +225,7 @@ public class Database {
 
         //Rating table initialization 
             db.lCreateTable = db.mConnection
-                    .prepareStatement("CREATE TABLE rating (id SERIAL PRIMARY KEY, m_email VARCHAR(50), like BIT, dislike BIT");
+                    .prepareStatement("CREATE TABLE rating (id SERIAL, m_email VARCHAR(50), like BIT, dislike BIT, CONSTRAINT mId_user PRIMARY KEY (id, m_email))");
 
             db.lDropTable = db.mConnection.prepareStatement("DROP TABLE rating");
             db.lDeleteOne = db.mConnection.prepareStatement("DELETE FROM rating WHERE id = ?");
@@ -217,6 +240,19 @@ public class Database {
 
             db.checkRating = db.mConnection.prepareStatement(
                 "SELECT m_email, like, dislike FROM rating WHERE m_id = ?");
+
+            db.getAllComMessage = db.mConnection.prepareStatement(
+                "SELECT * FROM messages LEFT OUTER JOIN comments ON messages.id = comments.id");
+            
+            db.getAllLikes = db.mConnection.prepareStatement(
+                "SELECT id, COUNT(like) FROM rating GROUP BY id");
+
+            db.getAllDislikes = db.mConnection.prepareStatement(
+                "SELECT id, COUNT(dislike) FROM rating GROUP BY id");
+            
+            db.getAllMessageUser = db.mConnection.prepareStatement(
+                "SELECT * FROM messages right outer join payload ON messages.mu_id = payload.email");
+            
 
             
             
@@ -381,11 +417,27 @@ public class Database {
      */
     ArrayList<RowData> selectAll() {
         ArrayList<RowData> res = new ArrayList<RowData>();
+        Comment newComment = new Comment();
+        CommentList newCommentList = new CommentList();
         try {
-            ResultSet rs = mSelectAll.executeQuery();
+
+            ResultSet rs = getAllMessageUser.executeQuery();
+            ResultSet rs2 = getAllComMessage.executeQuery();
+            ResultSet rs3 = getAllLikes.executeQuery();
+            ResultSet rs4 = getAllDislikes.executeQuery(); 
+
             while (rs.next()) {
+                rs3.next();
+                rs4.next();
             // create new RowData instance and insert it into ArrayList
-                res.add(new RowData(rs.getInt("id"), rs.getString("title"), rs.getString("message"), rs.getInt("likes"),
+                while (rs2.next() && rs2.getInt("messages.id") == rs.getInt("messages.id")) {
+                    newComment.setComment(rs2.getString("comments.c_message"), rs2.getString("comments.cu_id"), rs2.getInt("comments.c_id"));
+                    newCommentList.setComment(newComment);
+                }
+                
+
+                res.add(new RowData(rs.getString("payload.email"), rs.getString("payload.name"), rs.getString("payload.pic_url"), rs.getInt("messages.id"),
+                    rs.getString("messages.title"), rs.getString("messages.message"), 
                 rs.getInt("dislikes"), rs.getDate("date")));
 
                 
@@ -394,6 +446,7 @@ public class Database {
             return res;
         } catch (SQLException e) {
             e.printStackTrace();
+            System.out.println("Error in your selectAll() function in Database.java");
             return new ArrayList<>();
         }
     }

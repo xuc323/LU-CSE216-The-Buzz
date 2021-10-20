@@ -34,14 +34,14 @@ public class AppTest
      */
 
     // test mock data base connection/disconnection
-    public void test_databaseConnection() {
+    public void Test test_databaseConnection() {
         Database db = new Database(); // intialized mock connection
         assertNotNull("Testing if mock database was created", db); // if mock database was created, should not return NULL
         assertFalse(db.disconnect()); // should return false because the connection is NULL as it's a mock connection
     }
 
     // test function InsertRow();
-    public void test_insertRow() {
+    public void Test test_insertRow() {
         Database db = new Database(); // intialized mock connection
         try {
             assertEquals(db.insertRow("test", "test message"), 1); // database is not connected, therefore should return NULL
@@ -55,7 +55,7 @@ public class AppTest
 
     // test function safetyLikeCheck();
     // FIX ME (i think logic is wrong)
-    public void test_safetyLikeCheck() {
+    public void Test test_safetyLikeCheck() {
         Database db = new Database(); // intialized mock connection
         try {
             // check if both are set to 1
@@ -69,7 +69,7 @@ public class AppTest
     }
 
     // test function addUserInfo();
-    public void test_addUserInfo() {
+    public void Test test_addUserInfo() {
         Database db = new Database(); // intialized mock connection
         String u_id = "test@lehigh.edu";
         int m_id = 4;
@@ -83,7 +83,7 @@ public class AppTest
     // test function insertComment();
 
     // test function selectOne();
-    public void test_selectOne() {
+    public void Test test_selectOne() {
         Database db = new Database(); // intialized mock connection
         try {
             assertNotNull(db.selectOne(7)); // database is not connected, therefore should return NULL
@@ -96,7 +96,7 @@ public class AppTest
     }
 
     // test function deleteRow();
-    public void test_deleteRow() {
+    public void Test test_deleteRow() {
         Database db = new Database(); // intialized mock connection
         try {
             assertEquals(db.deleteRow(1), 1); // database is not connected, therefore should return NULL
@@ -109,7 +109,7 @@ public class AppTest
     }
 
     // test function updateOne();
-    public void test_updateOne() {
+    public void Test test_updateOne() {
         Database db = new Database(); // intialized mock connection
         try {
             assertEquals(db.updateOne(1, "Test Message"), 1); // // database is not connected, therefore should return NULL
@@ -122,7 +122,7 @@ public class AppTest
     }
 
     // test function updateOneLikes();
-    public void test_updateOneLikes() {
+    public void Test test_updateOneLikes() {
         Database db = new Database(); // intialized mock connection
         try {
             assertEquals(db.updateOneLikes(1), 1);
@@ -135,7 +135,7 @@ public class AppTest
     }
 
     // test function udpateOneDislikes();
-    public void test_updateOneDislikes() {
+    public void Test test_updateOneDislikes() {
         Database db = new Database(); // intialized mock connection
         try {
             assertEquals(db.updateOneDislikes(1), 1);

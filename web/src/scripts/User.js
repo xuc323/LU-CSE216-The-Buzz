@@ -5,34 +5,18 @@ class Avatar extends React.Component {
         super(props);
     }
 
+    // changing the modal based on which one it clicks.
     handleClick() {
-        const title = document.getElementById("account-profile-label");
-        const body = document.getElementById("account-details");
-
-        title.textContent = this.props.data.uId;
-        body.textContent = "Profile URL: " + this.props.data.uUrl + "\nEmail: " + this.props.data.uEmail;
+        const data = this.props.data;
+        document.getElementById("account-profile-label").textContent = data.uId;
+        document.getElementById("account-name").textContent = "Name: " + data.uName;
+        document.getElementById("account-url").textContent = "Profile URL: " + data.uUrl;
+        document.getElementById("account-email").textContent = "Email: " + data.uEmail;
     }
 
     render() {
         return (
             <img className="img-thumbnail rounded-circle mb-3" src={this.props.data.uUrl} alt="avatar" data-bs-toggle="modal" data-bs-target="#account-profile" type="button" onClick={() => this.handleClick()} />
-        );
-    }
-}
-
-class UserInfo extends React.Component {
-    constructor(props) {
-        super(props);
-    }
-
-    render() {
-        return (
-            <div className="UserInfo" >
-                <Avatar user={this.props.user} />
-                <div className="UserInfo-name">
-                    {this.props.user.name}
-                </div>
-            </div>
         );
     }
 }
@@ -64,4 +48,4 @@ class LoginBtn extends React.Component {
     }
 }
 
-export { Avatar, UserInfo, LoginBtn };
+export { Avatar, LoginBtn };

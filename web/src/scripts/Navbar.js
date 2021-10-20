@@ -5,6 +5,11 @@ class Navbar extends React.Component {
         super(props);
     }
 
+
+    handleClick() {
+
+    }
+
     render() {
         return (
             <nav className="navbar navbar-expand-md navbar-light bg-light" >
@@ -30,7 +35,7 @@ class Navbar extends React.Component {
                             </li>
 
                             <li className="nav-item">
-                                <a className="nav-link" href="/"><i className="bi bi-person-circle"></i> Account</a>
+                                <a className="nav-link" href="" data-bs-toggle="modal" data-bs-target="#account-profile" onClick={() => this.handleClick()}><i className="bi bi-person-circle"></i> Account</a>
                             </li>
                         </ul>
                     </div>

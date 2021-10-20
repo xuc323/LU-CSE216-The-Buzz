@@ -21,6 +21,14 @@ public class Comment {
 
         cId = comment_id;
     }
+
+    public void clearComment() {
+        cMessage = ""; 
+
+        user = ""; 
+
+        cId = 0; 
+    }
     
 }
 

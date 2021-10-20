@@ -62,15 +62,15 @@ public class Database {
     private PreparedStatement checkUser; 
     private PreparedStatement checkRating; 
     private PreparedStatement getAllComMessage;
-
-
     private PreparedStatement getAllLikes;
-
-
     private PreparedStatement getAllDislikes;
-
-
     private PreparedStatement getAllMessageUser;
+
+
+    private PreparedStatement getComMessage;
+    private PreparedStatement getLikes;
+    private PreparedStatement getDislikes;
+    private PreparedStatement getMessageUser;
 
 
 
@@ -105,25 +105,37 @@ public class Database {
         String mMessage;
         int mLikes;
         int mDislikes;
-        Date mDate;
+        String uId;
+        String uName; 
+        String uUrl; 
         CommentList mComments; 
+        Date mDate;
+    
 
         /**
          * Construct a RowData object by providing values for its fields
+         * @param string3
+         * @param string2
+         * @param string
          * 
          * @param id       The id of the row
          * @param title    The title/subject of the row
          * @param message  The message of the row
+         * @param newCommentList
          * @param likes    The like counts of the row
          * @param dislikes The dislike counts of the row
          * @param date     The date created
          */
-        public RowData(int id, String title, String message, int likes, int dislikes, Date date) {
+        public RowData(String email, String name, String pic_url, int id, String title, String message, CommentList commentList, int likes, int dislikes, Date date) {
             mId = id;
             mTitle = title;
             mMessage = message;
             mLikes = likes;
             mDislikes = dislikes;
+            uId = email; 
+            uName = name; 
+            uUrl = pic_url; 
+            mComments = commentList; 
             mDate = date;
         }
     }
@@ -236,7 +248,7 @@ public class Database {
 
         //Additional SQL queries to get more information 
             db.checkUser = db.mConnection.prepareStatement(
-                "SELECT COUNT(*) FROM payload WHERE email = ?");
+                "SELECT email, name FROM payload WHERE email = ?");
 
             db.checkRating = db.mConnection.prepareStatement(
                 "SELECT m_email, like, dislike FROM rating WHERE m_id = ?");
@@ -245,13 +257,25 @@ public class Database {
                 "SELECT * FROM messages LEFT OUTER JOIN comments ON messages.id = comments.id");
             
             db.getAllLikes = db.mConnection.prepareStatement(
-                "SELECT id, COUNT(like) FROM rating GROUP BY id");
+                "SELECT id, COUNT(like) as sum_like FROM rating GROUP BY id");
 
             db.getAllDislikes = db.mConnection.prepareStatement(
-                "SELECT id, COUNT(dislike) FROM rating GROUP BY id");
+                "SELECT id, COUNT(dislike) as sum_dislike FROM rating GROUP BY id");
             
             db.getAllMessageUser = db.mConnection.prepareStatement(
                 "SELECT * FROM messages right outer join payload ON messages.mu_id = payload.email");
+
+            db.getComMessage = db.mConnection
+                    .prepareStatement("SELECT * FROM messages LEFT OUTER JOIN comments ON messages.id = comments.id WHERE messages.id = ?");
+
+            db.getLikes = db.mConnection
+                    .prepareStatement("SELECT id, COUNT(like) as sum_like FROM rating WHERE id = ? GROUP BY id");
+
+            db.getDislikes = db.mConnection
+                    .prepareStatement("SELECT id, COUNT(dislike) as sum_dislike FROM rating WHERE id = ? GROUP BY id");
+
+            db.getMessageUser = db.mConnection.prepareStatement(
+                    "SELECT * FROM messages RIGHT OUTER JOIN payload ON messages.mu_id = payload.email");
             
 
             
@@ -319,12 +343,10 @@ public class Database {
     int safetyLikeCheck(int m_id, String lu_id) {
         int m_like = 0;
         int m_dislike = 0; 
+
         try {
-            
             mInsertOne.setInt(1, m_id);
             ResultSet rs = checkRating.getResultSet(); 
-
-
          /*
             While the ResultSet res is gathering all of the tuples returned from the database, 
             we will iterate through the tuples and find the one that has a matching lu_id with the
@@ -362,8 +384,33 @@ public class Database {
     
 
     int addUserInfo(String u_id, String name, String pic_url) {
-        //Insert information about the user... 
-        return 0; 
+        int count = -1; // count number of inserts
+
+        try {
+
+        /*
+            Checking to see if the user is already a member of the Payload table. 
+        */
+            checkUser.setString(1, u_id);
+            ResultSet rs = checkUser.getResultSet();
+            while (rs.next()) {
+                if (rs.getString("email") == u_id) {
+                    return -1; 
+                }
+            }
+            oInsertOne.setString(1, u_id);
+            oInsertOne.setString(2, name);
+            oInsertOne.setString(3, pic_url); 
+            ResultSet rs2 = oInsertOne.executeQuery();
+            if (rs2.next()) {
+                count = rs2.getInt(1);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    
+        return count; 
     }
 
 
@@ -434,12 +481,13 @@ public class Database {
                     newComment.setComment(rs2.getString("comments.c_message"), rs2.getString("comments.cu_id"), rs2.getInt("comments.c_id"));
                     newCommentList.setComment(newComment);
                 }
-                
 
                 res.add(new RowData(rs.getString("payload.email"), rs.getString("payload.name"), rs.getString("payload.pic_url"), rs.getInt("messages.id"),
-                    rs.getString("messages.title"), rs.getString("messages.message"), 
-                rs.getInt("dislikes"), rs.getDate("date")));
+                    rs.getString("messages.title"), rs.getString("messages.message"), newCommentList, rs3.getInt("sum_like"), rs3.getInt("sum_dislike"),
+                    rs.getDate("date")));
 
+                newComment.clearComment();
+                newCommentList.deleteList();
                 
             }
             rs.close();
@@ -461,14 +509,40 @@ public class Database {
      */
     RowData selectOne(int id) {
         RowData res = null;
+        Comment newComment = new Comment(); 
+        CommentList newCommentList = new CommentList(); 
+
         try {
-            mSelectOne.setInt(1, id);
-            ResultSet rs = mSelectOne.executeQuery();
-            if (rs.next()) {
+            getMessageUser.setInt(1, id);
+            getComMessage.setInt(1, id);
+            getLikes.setInt(1, id);
+            getDislikes.setInt(1, id);
+            
+            ResultSet rs = getMessageUser.executeQuery();
+            ResultSet rs2 = getComMessage.executeQuery();
+            ResultSet rs3 = getLikes.executeQuery();
+            ResultSet rs4 = getDislikes.executeQuery();
+
+            while (rs.next()) {
+                rs3.next();
+                rs4.next();
                 // create new RowData instance and insert it into ArrayList
-                res = new RowData(rs.getInt("id"), rs.getString("title"), rs.getString("message"), rs.getInt("likes"),
-                        rs.getInt("dislikes"), rs.getDate("date"));
+                while (rs2.next() && rs2.getInt("messages.id") == rs.getInt("messages.id")) {
+                    newComment.setComment(rs2.getString("comments.c_message"), rs2.getString("comments.cu_id"),
+                            rs2.getInt("comments.c_id"));
+                    newCommentList.setComment(newComment);
+                }
+
+                res.add(new RowData(rs.getString("payload.email"), rs.getString("payload.name"),
+                        rs.getString("payload.pic_url"), rs.getInt("messages.id"), rs.getString("messages.title"),
+                        rs.getString("messages.message"), newCommentList, rs3.getInt("sum_like"),
+                        rs3.getInt("sum_dislike"), rs.getDate("date")));
+
+                newComment.clearComment();
+                newCommentList.deleteList();
+
             }
+
         } catch (SQLException e) {
             e.printStackTrace();
         }

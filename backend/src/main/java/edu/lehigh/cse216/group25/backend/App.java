@@ -10,6 +10,7 @@ import com.google.gson.*;
 import java.util.Collections;
 // Import map to get env variables
 import java.util.Map;
+import java.util.UUID;
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken.Payload;
@@ -22,6 +23,7 @@ import com.google.api.client.json.jackson2.JacksonFactory;
 
 import java.security.GeneralSecurityException;
 import java.io.IOException;
+import java.util.HashMap; 
 
 /**
  * For now, our app creates an HTTP server with only one route.
@@ -42,6 +44,14 @@ public class App {
         // NB: Gson is thread-safe. See
         // https://stackoverflow.com/questions/10380835/is-it-ok-to-use-gson-instance-as-a-static-field-in-a-model-bean-reuse
         final Gson gson = new Gson();
+
+
+
+        // Creating the Hash Table which takes in a UUID "key" and then prints out a "value" (user email)
+        UUID uuid = UUID.randomUUID();
+        HashMap<UUID, String> s_map = new HashMap<>();
+
+
 
         /*
             Defining our constants... CLIENT_WEB and CLIENT_ANDROID
@@ -137,6 +147,9 @@ public class App {
         Spark.post("/login", (request, response) -> {
 
             SimpleRequest res = gson.fromJson(request.body(), SimpleRequest.class);
+
+            // Google API to verify id_token and retrieve user information 
+
             try { 
                 GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(transport, jsonFactory)
                         // Specify the CLIENT_ID of the app that accesses the backend:
@@ -144,10 +157,11 @@ public class App {
                         .build();
 
                 GoogleIdToken idToken = verifier.verify(res.id_token);
+
                 if (idToken != null) {
                     Payload payload = idToken.getPayload();
 
-
+            
             // Get profile information from payload
                 String email = payload.getEmail();
                 System.out.println(email);
@@ -163,7 +177,7 @@ public class App {
                 to the hash table along with a randomly generated
                 session key. 
             */
-
+                
             } else {
                 System.out.println("Invalid ID token.");
             }

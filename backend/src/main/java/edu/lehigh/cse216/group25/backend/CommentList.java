@@ -24,8 +24,12 @@ public class CommentList {
     List<Comment> comments = new ArrayList<>();
 
     public void setComment(Comment insert) {
-        
+
         comments.add(insert);
+    }
+
+    public void deleteList() {
+        comments.clear(); 
     }
 }
 

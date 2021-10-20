@@ -10,6 +10,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.sql.Statement;
 
 public class Database {
     /**
@@ -23,56 +24,100 @@ public class Database {
      */
     private PreparedStatement mSelectAll;
 
+    private PreparedStatement oSelectAll;
+
+    private PreparedStatement cSelectAll;
+
+    private PreparedStatement lSelectAll;
+
     /**
      * A prepared statement for getting one row from the database
      */
     private PreparedStatement mSelectOne;
+
+    private PreparedStatement oSelectOne;
+
+    private PreparedStatement cSelectOne;
+
+    private PreparedStatement lSelectOne;
 
     /**
      * A prepared statement for deleting a row from the database
      */
     private PreparedStatement mDeleteOne;
 
+    private PreparedStatement oDeleteOne;
+
+    private PreparedStatement cDeleteOne;
+
+    private PreparedStatement lDeleteOne;
+
     /**
      * A prepared statement for inserting into the database
      */
     private PreparedStatement mInsertOne;
+
+    private PreparedStatement oInsertOne;
+
+    private PreparedStatement cInsertOne;
+
+    private PreparedStatement lInsertOne;
 
     /**
      * A prepared statement for updating a single row in the database
      */
     private PreparedStatement mUpdateOne;
 
+    private PreparedStatement oUpdateOne;
+
+    private PreparedStatement cUpdateOne;
+
+    private PreparedStatement lUpdateOne;
+
     /**
      * A prepared statement for updating likes in the database
      */
     private PreparedStatement mUpdateOneLikes;
 
+    private PreparedStatement oUpdateOneLikes;
+
+    private PreparedStatement cUpdateOneLikes;
+
+    private PreparedStatement lUpdateOneLikes;
+
     /**
      * A prepared statement for updating dislikes in the database
      */
     private PreparedStatement mUpdateOneDislikes;
+
+    private PreparedStatement oUpdateOneDislikes;
+
+    private PreparedStatement cUpdateOneDislikes;
+
+    private PreparedStatement lUpdateOneDislikes;
+
     /**
      * A prepared statement for creating the table in our database
      */
     private PreparedStatement mCreateTable;
 
+    private PreparedStatement oCreateTable;
+
+    private PreparedStatement cCreateTable;
+
+    private PreparedStatement lCreateTable;
+
     /**
-     * A prepared statement for dropping the table in our database
+     * A prepared statement for dropping tables in our database
      */
-    private PreparedStatement mDropTable;
+    private PreparedStatement mDropTable; 
 
-    private PreparedStatement oCreateTable; 
+    private PreparedStatement oDropTable;
+    
+    private PreparedStatement cDropTable;
+    
+    private PreparedStatement lDropTable;
 
-    private PreparedStatement oDropTable; 
-
-    private PreparedStatement oSelectAll;
-
-    private PreparedStatement oSelectOne;
-
-    private PreparedStatement oDeleteOne;
-
-    private PreparedStatement oInsertOne;
 
     /**
      * RowData is like a struct in C: we use it to hold data, and we allow direct
@@ -240,7 +285,7 @@ public class Database {
             db.cDropTable = db.mConnection.prepareStatement("DROP TABLE comments");
             // Standard CRUD operations
             db.cDeleteOne = db.mConnection.prepareStatement("DELETE FROM comments WHERE c_id = ?");
-            db.cDeleteSingleComment = db.mConnection.prepareStatement("DELETE FROM comments where c_id = ?");
+            //db.cDeleteRow = db.mConnection.prepareStatement("DELETE FROM comments where c_id = ?");
             db.cInsertOne = db.mConnection
                     .prepareStatement("INSERT INTO comments VALUES (default, ?, ?) RETURNING id");
             db.cSelectAll = db.mConnection.prepareStatement("SELECT * FROM linkage");
@@ -320,8 +365,9 @@ public class Database {
 
     int safetyLikeCheck(int m_id, String lu_id) {
         try {
-            Statement stmt = conn.createStatement();
+           Statement stmt = mConnection.createStatement();
             ResultSet res = stmt.executeQuery("SELECT m_email, like, dislike FROM rating WHERE m_id = "+m_id+"");
+            ResultSet rs = lSelectAll.executeQuery();
 
 
          /*
@@ -344,34 +390,40 @@ public class Database {
                 int m_dislike = rs.getInt("dislike");
 
                 if (lu_id.equals(return_email)) {
-                    int m_like = rs.getInt("like");
-                    int m_dislike = rs.getInt("dislike");
+                    m_like = rs.getInt("like");
+                    m_dislike = rs.getInt("dislike");
                 }
             }   
         }
         catch (SQLException e) {
             e.printStackTrace();
         }
+        return 0;
     }
 
+    // doesn't work
     // check if specific user is already in the database
+    /*
     int addUserInfo(String u_id, int m_id) {
         try {
-            Statement stmt = con.createStatement();
-            String check_value = stmt.executeQuery("SELECT email FROM payload WHERE email = "+u_id+"");
+            Statement stmt = mConnection.createStatement();
+            ResultSet check_value = stmt.executeQuery("SELECT email FROM payload WHERE email = "+u_id+"");
             int num_users = parseInt(check_value);
         }
         catch (SQLException e) {
             e.printStackTrace();
         }
     }
+    */
 
+    // doesn't work
+    /*
     int insertComment(int id, String cu_id, String c_message) {
         int count = -1; 
         int c_id; 
         try {
-            Statement stmt = con.createStatement();
-            String check_value = stmt.executeQuery("SELECT COUNT(*) FROM comments WHERE id = "+id+"");
+            Statement stmt = mConnection.createStatement();
+            ResultSet check_value = stmt.executeQuery("SELECT COUNT(*) FROM comments WHERE id = "+id+"");
             int num_comments = parseInt(check_value);
 
         /*
@@ -383,6 +435,7 @@ public class Database {
             Then when you POST another comment to "/messages/:m_id/comments", 
             the c_id for that comment would automatically be incremented by one.
         */
+            /*
             if (num_comments > 0) {
                 c_id = num_comments + 1;
                 lInsertOne.setInt(1, c_id);
@@ -393,7 +446,8 @@ public class Database {
                 if (res.next()) {
                     count = res.getInt(1);
                 }
-          } else {
+            }
+            else {
               c_id = 1;
               lInsertOne.setInt(1, c_id);
               lInsertOne.setString(2, c_message);
@@ -401,14 +455,15 @@ public class Database {
               ResultSet res = lInsertOne.getResultSet();
               if (res.next()) {
                   count = res.getInt(1);
-              }
-          }
-
-        } catch (SQLException e) {
+                }
+            }
+        }
+        catch (SQLException e) {
             e.printStackTrace();
         }
         return count; 
     }
+    */
 
     /**
      * Query the database for a list of all titles and their IDs
@@ -462,11 +517,11 @@ public class Database {
      * 
      * @return The number of rows that were deleted. -1 indicates an error.
      */
-    int deleteRow(int id, char email) {
+    int deleteRow(int id, String email) {
         int res = -1;
         try {
             mDeleteOne.setInt(1, id); // accounts for tables 1 and 3
-            mDeleteOne.setInt(1, email); // accounts for tables 2 and 4
+            mDeleteOne.setString(1, email); // accounts for tables 2 and 4
             res += mDeleteOne.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();

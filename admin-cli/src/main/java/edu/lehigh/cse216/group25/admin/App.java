@@ -7,6 +7,8 @@ import spark.Spark;
 import java.util.ArrayList;
 import java.util.Map;
 import com.google.gson.*;
+import java.sql.Statement;
+
 /**
  * App is our basic admin app. For now, it is a demonstration of the six key
  * operations on a database: connect, insert, update, query, delete, disconnect
@@ -162,15 +164,17 @@ public class App {
             } else if (action == 'q') {
                 break;
             } else if (action == 'T') { // if user enters T, then create the 4 tables
-                db.mCreateTable(); // message table
-                db.oCreateTable(); // payload table
-                db.cCreateTable(); // comment table
-                db.lCreateTable(); // rating table
+                db.createTable();
+                //db.mCreateTable(); // message table
+                //db.oCreateTable(); // payload table
+                //db.cCreateTable(); // comment table
+                //db.lCreateTable(); // rating table
             } else if (action == 'D') {
-                db.mdropTable(); // message table
-                db.odropTable(); // payload table
-                db.cdropTable(); // comment table
-                db.ldropTable(); // rating table
+                db.dropTable();
+                //db.mdropTable(); // message table
+                //db.odropTable(); // payload table
+                //db.cdropTable(); // comment table
+                //db.ldropTable(); // rating table
             } else if (action == '1') { // [1] Query for a specific row
                 int id = getInt(in, "Enter the message ID");
                 if (id == -1) // if error, continue
@@ -196,6 +200,7 @@ public class App {
                 }
             } else if (action == '-') { // [-] Delete a row
                 int id = getInt(in, "Enter the message ID");
+                String email = getString(in, "Enter valid email");
                 if (id == -1)
                     continue;
                 int res = db.deleteRow(id, email); // delete message pertaining to specified user
@@ -203,6 +208,7 @@ public class App {
                     continue;
                 System.out.println("  " + res + " rows deleted");
             } else if (action == '+') { // Insert a new row
+                String title = getString(in, "Enter the title");
                 String message = getString(in, "Enter the message");
                 if (message.equals("")) // if a message was entered, insert the new row
                     continue;

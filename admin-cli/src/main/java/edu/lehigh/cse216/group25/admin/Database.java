@@ -213,7 +213,7 @@ public class Database {
          */ 
             // create Table2 thst includes email, first_name, last_name, picture_url
             db.oCreateTable = db.mConnection.prepareStatement(
-                    "CREATE TABLE payload (email VARCHAR(30) PRIMARY KEY, first_name VARCHAR(15), last_name VARCHAR(20), picture_url VARCHAR(50))");
+                    "CREATE TABLE payload (email VARCHAR(30) PRIMARY KEY, first_name VARCHAR(50), last_name VARCHAR(20), picture_url VARCHAR(50))");
             db.oDropTable = db.mConnection.prepareStatement("DROP TABLE payload");
             // Standard CRUD operations
             db.oDeleteOne = db.mConnection.prepareStatement("DELETE FROM payload WHERE email = ?");
@@ -349,19 +349,20 @@ public class Database {
                 }
             }   
         }
-        finally {
-            // The finally block always executes.
-         }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
+    // check if specific user is already in the database
     int addUserInfo(String u_id, int m_id) {
         try {
             Statement stmt = con.createStatement();
             String check_value = stmt.executeQuery("SELECT email FROM payload WHERE email = "+u_id+"");
-            int num_comments = parseInt(check_value);
+            int num_users = parseInt(check_value);
         }
-        finally {
-            // The finally block always executes.
+        catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 
@@ -542,12 +543,15 @@ public class Database {
     }
 
     /**
-     * Remove tblData from the database. If it does not exist, this will print an
+     * Remove the 4 tables from the database. If it does not exist, this will print an
      * error.
      */
     void dropTable() {
         try {
             mDropTable.execute();
+            oDropTable.execute();
+            cDropTable.execute();
+            lDropTable.execute();
         } catch (SQLException e) {
             e.printStackTrace();
         }

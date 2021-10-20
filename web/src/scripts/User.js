@@ -5,9 +5,17 @@ class Avatar extends React.Component {
         super(props);
     }
 
+    handleClick() {
+        const title = document.getElementById("account-profile-label");
+        const body = document.getElementById("account-details");
+
+        title.textContent = this.props.data.uId;
+        body.textContent = "Profile URL: " + this.props.data.uUrl + "\nEmail: " + this.props.data.uEmail;
+    }
+
     render() {
         return (
-            <img className="img-thumbnail rounded-circle mb-3" src={"https://randomuser.me/api/portraits/women/1.jpg"} alt="avatar" />
+            <img className="img-thumbnail rounded-circle mb-3" src={this.props.data.uUrl} alt="avatar" data-bs-toggle="modal" data-bs-target="#account-profile" type="button" onClick={() => this.handleClick()} />
         );
     }
 }
@@ -36,11 +44,12 @@ class LoginBtn extends React.Component {
 
     render() {
         return (
-            <div>
+            <div id="LoginBtn">
                 <div id="g_id_onload"
                     data-client_id="496410238969-mvosj73q4tnp1dumhbpfbucato5ner3k.apps.googleusercontent.com"
-                    data-login_uri="https://the-buzz-group25.herokuapp.com/login"
-                    data-auto_prompt="false">
+                    // data-login_uri="https://xuc-web.herokuapp.com/login"
+                    // data-login_url="http://localhost:4567/login"
+                    data-callback="handleCredentialResponse">
                 </div>
                 <div className="g_id_signin"
                     data-type="standard"
@@ -51,7 +60,7 @@ class LoginBtn extends React.Component {
                     data-logo_alignment="left">
                 </div>
             </div>
-        )
+        );
     }
 }
 

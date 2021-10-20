@@ -54,8 +54,31 @@ public class AppTest
     }
 
     // test function safetyLikeCheck();
+    // FIX ME (i think logic is wrong)
+    public void test_safetyLikeCheck() {
+        Database db = new Database(); // intialized mock connection
+        try {
+            // check if both are set to 1
+            assertEquals(db.safetyLikeCheck(1), 1); // database is not connected, therefore should return NULL
+            fail("Null pointer exception");
+        }
+        catch(NullPointerException e) {
+            // error
+        }
+        assertFalse(db.disconnect()); // return null because mock database is not connected
+    }
 
     // test function addUserInfo();
+    public void test_addUserInfo() {
+        Database db = new Database(); // intialized mock connection
+        String u_id = "test@lehigh.edu";
+        int m_id = 4;
+        Database.RowData row = new Database.RowData(u_id, m_id);
+        assertEquals(row.mId, u_id); // user id
+        assertEquals(row.mId, m_id); // message id
+        
+        assertFalse(db.disconnect()); // return null because mock database is not connected
+    }
 
     // test function insertComment();
 
@@ -99,10 +122,32 @@ public class AppTest
     }
 
     // test function updateOneLikes();
+    public void test_updateOneLikes() {
+        Database db = new Database(); // intialized mock connection
+        try {
+            assertEquals(db.updateOneLikes(1), 1);
+            fail("Null pointer exception");
+        }
+        catch(NullPointerException e) {
+            // error
+        }
+        assertFalse(db.disconnect()); // return null because mock database is not connected
+    }
 
     // test function udpateOneDislikes();
-
+    public void test_updateOneDislikes() {
+        Database db = new Database(); // intialized mock connection
+        try {
+            assertEquals(db.updateOneDislikes(1), 1);
+            fail("Null pointer exception");
+        }
+        catch(NullPointerException e) {
+            // error
+        }
+        assertFalse(db.disconnect()); // return null because mock database is not connected
+    }
 }
+
 // Unit Testing:
 // test that comment id is unique
 // test unique emails

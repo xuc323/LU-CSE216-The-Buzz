@@ -27,7 +27,7 @@ public class App {
         System.out.println("  [-] Delete a row");
         System.out.println("  [+] Insert a new row");
         System.out.println("  [~] Update a row");
-        System.out.println("  [Q] Quit Program");
+        System.out.println("  [q] Quit Program");
         System.out.println("  [?] Help (this message)");
     }
 
@@ -160,9 +160,9 @@ public class App {
             // function call
             char action = prompt(in);
             if (action == '?') {
-                println(menu());
-            } else if (action == 'Q') {
-                println("Exiting command-line");
+                menu();
+            } else if (action == 'q') {
+                //println("Exiting command-line");
                 break;
             } else if (action == 'T') { // if user enters T, then create the 4 tables
                 db.createTable();

@@ -2,6 +2,8 @@
 
 This README documents the set up of Admin.
 
+### Phase 1 Documentation ###
+
 ### What is this repository for? ###
 
 The admin is a cli application that company administration would use to perform database operations.
@@ -35,3 +37,21 @@ static void menu() {
 
 * Repo owner or admin
 * Other community or team contact
+
+### Phase 2 Documentation ###
+
+I pair programmed with Sat, the backend developer for Phase 2. We worked on creating what tables should be included in the database and what specifically goes in each of the 4 tables.
+
+Our initial design of the 4 tables are below:
+
+Table 1: Messages
+- includes: id, title, message, email
+
+Table 2: Payload (info from Google authorization)
+- includes: email, first_name, last_name, picture_url
+
+Table 3: Comments
+- includes: id, c_id, c_message, email
+
+Table 4: Rating (Likes and Dislikes)
+- includes: email, likes, dislikes, id

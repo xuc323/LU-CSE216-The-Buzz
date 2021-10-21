@@ -68,3 +68,9 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 ### `npm run build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+
+### Mock On Memory Database
+
+On memory database is set up at the beginning of some files (Post, User). If the server is not accessible, comment out the fetch comment and use on memory database variables instead.
+
+### **_Happy Coding!_**

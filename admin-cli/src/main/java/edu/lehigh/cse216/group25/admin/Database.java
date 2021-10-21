@@ -99,6 +99,7 @@ public class Database {
     /**
      * A prepared statement for creating the table in our database
      */
+<<<<<<< HEAD
     private PreparedStatement mCreateTable;
 
     private PreparedStatement oCreateTable;
@@ -107,6 +108,11 @@ public class Database {
 
     private PreparedStatement lCreateTable;
 
+=======
+    private PreparedStatement mCreateTable1;
+    private PreparedStatement mCreateTable2;
+    private PreparedStatement mCreateTable3;
+>>>>>>> b3ec7c4bb64b1b7111695cf7d3f026f3e5c5eac4
     /**
      * A prepared statement for dropping tables in our database
      */

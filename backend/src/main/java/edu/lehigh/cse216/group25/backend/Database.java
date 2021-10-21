@@ -47,7 +47,8 @@ public class Database {
     private PreparedStatement lSelectAll;
     private PreparedStatement lSelectOne;
     private PreparedStatement lDeleteOne;
-    private PreparedStatement lInsertOne;
+    private PreparedStatement lInsertOneLike;
+    private PreparedStatement lInsertOneDislike;
 
     //PREPARED STATEMENTS FOR THE COMMENTS TABLE
     private PreparedStatement cCreateTable;
@@ -84,7 +85,7 @@ public class Database {
 
 //End prepared statements ----------------------------------------------------
 
-
+    public class UserInfo 
 
 
 
@@ -98,7 +99,7 @@ public class Database {
      * representation of a row of the database. RowData and the Database are tightly
      * coupled: if one changes, the other should too.
      */
-    public static class RowData {
+    public class RowData {
 
         int mId;
         String mTitle;
@@ -137,6 +138,12 @@ public class Database {
             uUrl = pic_url; 
             mComments = commentList; 
             mDate = date;
+        }
+
+        public RowData(String email, String name, String picture_url) {
+            uId = email; 
+            uName = name; 
+            uUrl = picture_url;
         }
     }
 
@@ -219,18 +226,18 @@ public class Database {
             db.oInsertOne = db.mConnection
                     .prepareStatement("INSERT INTO payload VALUES (?, ?, ?) RETURNING email");
             db.oSelectAll = db.mConnection.prepareStatement("SELECT * FROM payload");
-            db.oSelectOne = db.mConnection.prepareStatement("SELECT * from payload WHERE email=?");
+            db.oSelectOne = db.mConnection.prepareStatement("SELECT * from payload WHERE email = ?");
 
 
         //Comments table initialization 
             db.cCreateTable = db.mConnection.prepareStatement(
-                    "CREATE TABLE comments (id SERIAL, c_id INT, c_message VARCHAR(100) NOT NULL, cu_id VARCHAR(50), CONSTRAINT cid_id PRIMARY KEY (id,c_id)");
+                    "CREATE TABLE comments (id INT, c_id INT, c_message VARCHAR(100) NOT NULL, cu_id VARCHAR(50), CONSTRAINT cid_id PRIMARY KEY (id,c_id)");
 
             db.cDropTable = db.mConnection.prepareStatement("DROP TABLE comments");
             db.cDeleteOne = db.mConnection.prepareStatement("DELETE FROM comments WHERE id = ?");
             db.cDeleteSingleComment = db.mConnection.prepareStatement("DELETE FROM comments where c_id = ?");
             db.cInsertOne = db.mConnection
-                    .prepareStatement("INSERT INTO comments VALUES (default, ?, ?, ?) RETURNING id");
+                    .prepareStatement("INSERT INTO comments VALUES (?, ?, ?, ?) RETURNING id");
             db.cSelectAll = db.mConnection.prepareStatement("SELECT * FROM linkage");
             db.cSelectOne = db.mConnection.prepareStatement("SELECT * from linkage WHERE id = ?");
 
@@ -241,7 +248,8 @@ public class Database {
 
             db.lDropTable = db.mConnection.prepareStatement("DROP TABLE rating");
             db.lDeleteOne = db.mConnection.prepareStatement("DELETE FROM rating WHERE id = ?");
-            db.lInsertOne = db.mConnection.prepareStatement("INSERT INTO rating VALUES (default, ?, ?, ?) RETURNING id");
+            db.lInsertOneLike = db.mConnection.prepareStatement("INSERT INTO rating VALUES (?, ?, ?, 0) RETURNING id");
+            db.lInsertOneDislike = db.mConnection.prepareStatement("INSERT INTO rating VALUES (?, ?, 0, ?) RETURNING id");
             db.lSelectAll = db.mConnection.prepareStatement("SELECT * FROM rating");
             db.lSelectOne = db.mConnection.prepareStatement("SELECT * from rating WHERE id = ?");
 
@@ -323,15 +331,16 @@ public class Database {
      * 
      * @return The number of rows that were inserted
      */
-    int insertRow(String title, String message) {
+    int insertRow(String title, String message, String u_id) {
         int count = -1;
         try {
             mInsertOne.setString(1, title);
             mInsertOne.setString(2, message);
+            mInsertOne.setString(3, u_id);
             mInsertOne.execute();
             ResultSet res = mInsertOne.getResultSet();
             if (res.next()) {
-                count = res.getInt(1);
+                count = count + 1; 
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -432,23 +441,25 @@ public class Database {
         */
             if (num_comments > 0) {
                 c_id = num_comments + 1;
-                lInsertOne.setInt(1, c_id);
-                lInsertOne.setString(2, c_message);
-                lInsertOne.setString(3, cu_id);
-                lInsertOne.execute();
-                ResultSet res = lInsertOne.getResultSet();
+                cInsertOne.setInt(1, id);
+                cInsertOne.setInt(2, c_id);
+                cInsertOne.setString(3, c_message);
+                cInsertOne.setString(4, cu_id);
+                cInsertOne.execute();
+                ResultSet res = cInsertOne.getResultSet();
                 if (res.next()) {
-                    count = res.getInt(1);
+                    count = count + 1;
                 }
           } else {
-              c_id = 1;
-              lInsertOne.setInt(1, c_id);
-              lInsertOne.setString(2, c_message);
-              lInsertOne.setString(3, cu_id);
-              ResultSet res = lInsertOne.getResultSet();
-              if (res.next()) {
-                  count = res.getInt(1);
-              }
+                c_id = 1;
+                cInsertOne.setInt(1, id);
+                cInsertOne.setInt(2, c_id);
+                cInsertOne.setString(3, c_message);
+                cInsertOne.setString(4, cu_id);
+                ResultSet res = cInsertOne.getResultSet();
+                if (res.next()) {
+                    count = count + 1; 
+                }
           }
 
         } catch (SQLException e) {
@@ -463,7 +474,7 @@ public class Database {
      * @return All rows, as an ArrayList
      */
     ArrayList<RowData> selectAll() {
-        ArrayList<RowData> res = new ArrayList<RowData>();
+        ArrayList<RowData> res = new ArrayList<>();
         Comment newComment = new Comment();
         CommentList newCommentList = new CommentList();
         try {
@@ -499,6 +510,30 @@ public class Database {
         }
     }
 
+    /* 
+        Selects one person from the payload table and then retrieves their name and picture_url 
+    */
+    RowData selectOneUser(String u_id) {
+        ResultSet res = null; 
+        RowData row = null; 
+
+        try {
+            oSelectOne.setString(1, u_id);
+            res = oSelectOne.executeQuery();
+
+            while(res.next()) {
+                row = new RowData(u_id, res.getString("name"), res.getString("picture_url"));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.out.println("Error in Function RowData selectOneUser");
+
+        }
+        
+        return row; 
+    }
+
 
     /**
      * Get all data for a specific row, by ID
@@ -508,16 +543,17 @@ public class Database {
      * @return The data for the requested row, or null if the ID was invalid
      */
     RowData selectOne(int id) {
-        RowData res = null;
+
         Comment newComment = new Comment(); 
         CommentList newCommentList = new CommentList(); 
+        RowData res = null; 
 
         try {
             getMessageUser.setInt(1, id);
             getComMessage.setInt(1, id);
             getLikes.setInt(1, id);
             getDislikes.setInt(1, id);
-            
+
             ResultSet rs = getMessageUser.executeQuery();
             ResultSet rs2 = getComMessage.executeQuery();
             ResultSet rs3 = getLikes.executeQuery();
@@ -526,6 +562,7 @@ public class Database {
             while (rs.next()) {
                 rs3.next();
                 rs4.next();
+
                 // create new RowData instance and insert it into ArrayList
                 while (rs2.next() && rs2.getInt("messages.id") == rs.getInt("messages.id")) {
                     newComment.setComment(rs2.getString("comments.c_message"), rs2.getString("comments.cu_id"),
@@ -533,13 +570,13 @@ public class Database {
                     newCommentList.setComment(newComment);
                 }
 
-                res.add(new RowData(rs.getString("payload.email"), rs.getString("payload.name"),
+                res = new RowData(rs.getString("payload.email"), rs.getString("payload.name"),
                         rs.getString("payload.pic_url"), rs.getInt("messages.id"), rs.getString("messages.title"),
                         rs.getString("messages.message"), newCommentList, rs3.getInt("sum_like"),
-                        rs3.getInt("sum_dislike"), rs.getDate("date")));
+                        rs3.getInt("sum_dislike"), rs.getDate("date"));
 
                 newComment.clearComment();
-                newCommentList.deleteList();
+                newCommentList.deleteList(); 
 
             }
 
@@ -556,7 +593,7 @@ public class Database {
      * 
      * @return The number of rows that were deleted. -1 indicates an error.
      */
-    int deleteRow(int id) {
+    int deleteMessageRow(int id) {
         int res = -1;
         try {
             mDeleteOne.setInt(1, id);
@@ -592,11 +629,13 @@ public class Database {
      * @param id The id of the row to update
      * @return The number of rows that were updated. -1 indicates an error.
      */
-    int updateOneLikes(int id) {
+    int updateOneLikes(int id, String ru_id) {
         int res = -1;
         try {
-            mUpdateOneLikes.setInt(1, id);
-            res += mUpdateOneLikes.executeUpdate();
+            lInsertOneLike.setInt(1, id);
+            lInsertOneLike.setString(2, ru_id);
+            lInsertOneLike.setInt(3, 1);
+            res += lInsertOneLike.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }

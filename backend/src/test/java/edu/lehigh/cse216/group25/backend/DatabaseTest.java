@@ -12,38 +12,38 @@ public class DatabaseTest {
     Database db;
     int idx;
 
-    @BeforeAll
-    public void testConstructor() {
-        // get database url from the env and create the Database instance
-        Map<String, String> env = System.getenv();
-        String db_url = env.get("DATABASE_URL");
-        db = Database.getDatabase(db_url);
-        // check if db is successfully created
-        assertTrue(db != null);
-    }
+    // @BeforeAll
+    // public void testConstructor() {
+    //     // get database url from the env and create the Database instance
+    //     Map<String, String> env = System.getenv();
+    //     String db_url = env.get("DATABASE_URL");
+    //     db = Database.getDatabase(db_url);
+    //     // check if db is successfully created
+    //     assertTrue(db != null);
+    // }
 
 
-    @Test
-    public void testLike() {
-        // get the first instance of all messages and update the like count
-        int likeCount = db.selectOne(idx).mLikes;
-        int status = db.updateOneLikes(idx);
-        // check that updating likes works
-        assertTrue(true);
-        // get the like count for the one we just updated
-        int likeCountAfter = db.selectOne(idx).mLikes;
-        // check if it actually got incremented
-        assertTrue(true);
-    }
+    // @Test
+    // public void testLike() {
+    //     // get the first instance of all messages and update the like count
+    //     int likeCount = db.selectOne(idx).mLikes;
+    //     int status = db.updateOneLikes(idx);
+    //     // check that updating likes works
+    //     assertTrue(true);
+    //     // get the like count for the one we just updated
+    //     int likeCountAfter = db.selectOne(idx).mLikes;
+    //     // check if it actually got incremented
+    //     assertTrue(true);
+    // }
 
-    @AfterAll
-    public void testCleanUp() {
-        int delStatus = db.deleteRow(idx);
-        assertTrue(delStatus != -1);
-        // close the connection
-        boolean status = db.disconnect();
-        assertTrue(status);
-    }
+    // @AfterAll
+    // public void testCleanUp() {
+    //     int delStatus = db.deleteRow(idx);
+    //     assertTrue(delStatus != -1);
+    //     // close the connection
+    //     boolean status = db.disconnect();
+    //     assertTrue(status);
+    // }
     /**
      * Since the db instance needs to be true and tests will run randomly, all tests
      * are now performed in one function. This test ensures that db can be created,

@@ -1,18 +1,14 @@
 package edu.lehigh.cse216.group25.backend;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
-import java.lang.reflect.Array;
-import java.net.URI;
-import java.net.URISyntaxException;
-
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 public class Database {
     /**
@@ -84,9 +80,6 @@ public class Database {
 
 
 //End prepared statements ----------------------------------------------------
-
-    public class UserInfo 
-
 
 
     /**

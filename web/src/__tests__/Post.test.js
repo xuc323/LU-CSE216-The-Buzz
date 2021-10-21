@@ -74,4 +74,8 @@ it("should render posts", () => {
     });
 
     expect(container.querySelector("[id='messages']") == !undefined);
+    expect(container.querySelector("[id='newEntryForm']").hidden == true);
+    expect(container.querySelector("[id='editEntryForm']").hidden == true);
+    expect(container.querySelector("[id='addCommentForm']").hidden == true);
+    
 });

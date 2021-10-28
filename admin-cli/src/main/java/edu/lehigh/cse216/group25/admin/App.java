@@ -7,6 +7,8 @@ import spark.Spark;
 import java.util.ArrayList;
 import java.util.Map;
 import com.google.gson.*;
+import java.sql.Statement;
+
 /**
  * App is our basic admin app. For now, it is a demonstration of the six key
  * operations on a database: connect, insert, update, query, delete, disconnect
@@ -131,8 +133,6 @@ public class App {
         } else {
             // print out if database is connected successfully
             System.out.println("Postgres database connected!");
-            // db.dropTable();
-            // db.createTable();
         }
 
         // Set up the location for serving static files. If the STATIC_LOCATION
@@ -162,45 +162,60 @@ public class App {
             if (action == '?') {
                 menu();
             } else if (action == 'q') {
+                //println("Exiting command-line");
                 break;
-            } else if (action == 'T') {
+            } else if (action == 'T') { // if user enters T, then create the 4 tables
                 db.createTable();
+                //db.mCreateTable(); // message table
+                //db.oCreateTable(); // payload table
+                //db.cCreateTable(); // comment table
+                //db.lCreateTable(); // rating table
             } else if (action == 'D') {
                 db.dropTable();
-            } else if (action == '1') {
-                int id = getInt(in, "Enter the row ID");
-                if (id == -1)
+                //db.mdropTable(); // message table
+                //db.odropTable(); // payload table
+                //db.cdropTable(); // comment table
+                //db.ldropTable(); // rating table
+            } else if (action == '1') { // [1] Query for a specific row
+                int id = getInt(in, "Enter the message ID");
+                if (id == -1) // if error, continue
                     continue;
                 Database.RowData res = db.selectOne(id);
                 if (res != null) {
-                    System.out.println("  [" + res.mId + "] " + res.mSubject);
+                    System.out.println("  [" + res.mId + "] ");
                     System.out.println("  --> " + res.mMessage);
                 }
-            } else if (action == '*') {
+            } else if (action == '*') { // [*] Query for all rows
                 ArrayList<Database.RowData> res = db.selectAll();
                 if (res == null)
                     continue;
                 System.out.println("  Current Database Contents");
                 System.out.println("  -------------------------");
-                for (Database.RowData rd : res) {
-                    System.out.println("  [" + rd.mId + "] " + rd.mSubject);
+                for (Database.RowData rd : res) { // print all row data
+                    System.out.println("  [" + rd.mId + "] ");
+                    System.out.println("  [" + rd.mTitle + "] ");
+                    System.out.println("  [" + rd.mMessage + "] ");
+                    System.out.println("  [" + rd.mLikes + "] ");
+                    System.out.println("  [" + rd.mDislikes + "] ");
+                    System.out.println("  [" + rd.mDate + "] ");
                 }
-            } else if (action == '-') {
-                int id = getInt(in, "Enter the row ID");
+            } else if (action == '-') { // [-] Delete a row
+                int id = getInt(in, "Enter the message ID");
+                String email = getString(in, "Enter valid email");
                 if (id == -1)
                     continue;
-                int res = db.deleteRow(id);
+                int res = db.deleteRow(id, email); // delete message pertaining to specified user
                 if (res == -1)
                     continue;
                 System.out.println("  " + res + " rows deleted");
-            } else if (action == '+') {
-                String subject = getString(in, "Enter the subject");
+            } else if (action == '+') { // Insert a new row
+                String title = getString(in, "Enter the title");
                 String message = getString(in, "Enter the message");
-                if (subject.equals("") || message.equals(""))
+                if (message.equals("")) // if a message was entered, insert the new row
                     continue;
-                int res = db.insertRow(subject, message);
+                int res = db.insertRow(title, message);
                 System.out.println(res + " rows added");
-            } else if (action == '~') {
+            } else if (action == '~') { // Update a row
                 int id = getInt(in, "Enter the row ID :> ");
                 if (id == -1)
                     continue;

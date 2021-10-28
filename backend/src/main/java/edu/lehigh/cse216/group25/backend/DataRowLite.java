@@ -1,5 +1,6 @@
 package edu.lehigh.cse216.group25.backend;
 
+
 /**
  * DataRowLite is for communicating back a subset of the information in a
  * DataRow. Specifically, we only send back the id and title. Note that in order

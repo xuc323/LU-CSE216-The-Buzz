@@ -41,7 +41,8 @@ class _HomePageState extends State<HomePage> {
                       child: Row(
                         children: <Widget>[
                           SizedBox(width: 16),
-                          Flexible(
+                          Align(
+                            alignment: Alignment.centerLeft,
                             child: Column(
                               children: <Widget>[
                                 Text(article.mTitle),
@@ -52,6 +53,9 @@ class _HomePageState extends State<HomePage> {
                                       fontSize: 15,
                                       fontWeight: FontWeight.bold),
                                 ),
+                                Text(article.mLikes.toString()),
+                                Text(article.mDislikes.toString()),
+                                Text(article.mDate),
                               ],
                             ),
                           ),

@@ -27,5 +27,18 @@ public class SimpleRequest {
      * The indicator of dislikes. If not 0, then increment dislike count in
      * database.
      */
+
+    public int mId; 
+
+    public String uId; 
+
+    public int c_id; 
+
+
     public int mDislikes;
+
+    public String id_token; 
+
+
+
 }

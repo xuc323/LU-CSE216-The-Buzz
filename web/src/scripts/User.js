@@ -8,10 +8,11 @@ class Avatar extends React.Component {
     // changing the modal based on which one it clicks.
     handleClick() {
         const data = this.props.data;
-        document.getElementById("account-profile-label").textContent = data.uId;
+        // document.getElementById("account-profile-label").textContent = data.uId;
         document.getElementById("account-name").textContent = "Name: " + data.uName;
         document.getElementById("account-url").textContent = "Profile URL: " + data.uUrl;
         document.getElementById("account-email").textContent = "Email: " + data.uEmail;
+        document.getElementById("account-profile1").src = data.uUrl;
     }
 
     render() {
@@ -31,8 +32,11 @@ class LoginBtn extends React.Component {
             <div id="LoginBtn">
                 <div id="g_id_onload"
                     data-client_id="496410238969-mvosj73q4tnp1dumhbpfbucato5ner3k.apps.googleusercontent.com"
+<<<<<<< HEAD
                     data-login_uri="https://xuc-web.herokuapp.com/login" //might have to remove
                     data-login_url="http://localhost:4567/login" //might have to remove
+=======
+>>>>>>> 4cba61f40413f0442082f048f3159dd169e709ff
                     data-callback="handleCredentialResponse">
                 </div>
                 <div className="g_id_signin"

@@ -77,6 +77,23 @@ class API_Manager {
 }
 ```
 
+## Phase 2
 
+
+In Phase 2, we are implementing the Google OAuth system into our software. I did it by using Firebase, which is like a backend that receive our user's information, and get the login token from Firebase, goes back to our software, by successfully log in to google, It shows the messages that we got.
+
+Since there's not much information on coursesite or piazza, I recommended the rest of people who will do this part to learn more about it by looking up tutorials on Youtube. There's a lot of content creators who are flutter engineers and giving us tutorials step by step. Very useful, and I basically did what I need to do by following the tutorials.
+
+Here are some links that might be helpful to get to know about how to set up firebase and google oauth.
+
+https://youtu.be/1k-gITZA9CI -- I followed his steps about how to do these
+
+https://firebase.google.com/docs/flutter/setup?platform=ios firebase setup
+
+Also, there are some dependencies that you need to add in the pubspec.yaml. If you are using vscode, just add them into the pubspec.yaml and it automatically runs flutter get, which will give you the dependencies you need. In this phase, I added these dependencies(phase 1's dependencies not included).
+  firebase_auth: ^1.1.4
+  google_sign_in: ^5.0.3
+  font_awesome_flutter: ^9.0.0
+  provider: ^5.0.0
 
 

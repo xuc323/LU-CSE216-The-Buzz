@@ -53,7 +53,9 @@
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="account-profile-label"></h5>
+            <h5 class="modal-title" id="account-profile-label">
+              <img id="account-profile1" src="" alt="avatar" />
+            </h5>
             <button
               type="button"
               class="btn-close"
@@ -65,6 +67,54 @@
             <p id="account-name"></p>
             <p id="account-url"></p>
             <p id="account-email"></p>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Account Modal -->
+    <div
+      class="modal fade"
+      id="main-account-profile"
+      data-bs-backdrop="static"
+      data-bs-keyboard="false"
+      tabindex="-1"
+      aria-labelledby="main-account-profile-label"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="main-account-profile-label">
+              <img id="main-account-profile1" src="" alt="avatar" />
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body" id="account-details">
+            <p id="main-account-name"></p>
+            <p id="main-account-url"></p>
+            <p id="main-account-email"></p>
+            <label>Bio: </label>
+            <textarea
+              id="bio"
+              className="form-control"
+              placeholder="Profile bio..."
+            ></textarea>
+            <button type="button" className="btn btn-primary">Submit</button>
           </div>
           <div class="modal-footer">
             <button

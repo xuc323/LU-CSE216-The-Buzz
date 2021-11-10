@@ -29,7 +29,7 @@ dependencies:
   google_sign_in: ^5.0.3
   font_awesome_flutter: ^9.0.0
   provider: ^5.0.0
-  
+
   # Dependencies for camera plugin
   camera:
   path_provider:
@@ -38,6 +38,9 @@ dependencies:
   
   # Dependency for local storage
   cached_network_image: ^3.1.0+1
+
+  # Dependency for local cache for images
+  flutter_cache_manager_firebase: ^2.0.1
 
 dev_dependencies:
   flutter_test:

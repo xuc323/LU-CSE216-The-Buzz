@@ -6,6 +6,7 @@ import 'dart:io';
 
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:path/path.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding
@@ -128,3 +129,22 @@ class DisplayPictureScreen extends StatelessWidget {
     );
   }
 }
+
+  // attempt to update the the UI to display the files attached to messages and comments using cache
+  /*
+  var file = await FirebaseCacheManager().getSingleFile(url); //
+
+  class DefaultCacheManager {
+    getSingleFile(Context url) {
+
+      }
+  }
+  
+  Stream<FileResponse> getImageFile(String url, {
+    String? key,
+    Map<String, String>? headers,
+    bool? withProgress,
+    int? maxHeight,
+    int? maxWidth,
+})
+*/

@@ -20,6 +20,13 @@ class Message {
   factory Message.fromJson(Map<String, dynamic> json) => Message(
         mStatus: json["mStatus"],
         mData: List<MDatum>.from(json["mData"].map((x) => MDatum.fromJson(x))),
+        // pick media or take picture to attach to message
+        //final ImagePicker _picker = ImagePicker();
+        //final camera? image = await _picker.pickImage(source: ImageSource.gallery);
+        //final camera? photo = await _picker.pickImage(source: ImageSource.camera);
+        //final camera? image = await _picker.pickVideo(source: ImageSource.gallery);
+        //final camera? video = await _picker.pickVideo(source: ImageSource.camera);
+        //final List<camera>? images = await _picker.pickMultiImage();
       );
 
   Map<String, dynamic> toJson() => {

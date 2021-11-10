@@ -35,6 +35,9 @@ dependencies:
   path_provider:
   path:
   image_picker:
+  
+  # Dependency for local storage
+  cached_network_image: ^3.1.0+1
 
 dev_dependencies:
   flutter_test:

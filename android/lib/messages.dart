@@ -3,6 +3,7 @@
 //     final welcome = welcomeFromJson(jsonString);
 
 import 'dart:convert';
+//import 'package:image_picker/image_picker.dart';
 
 Message MessagefromJson(String str) => Message.fromJson(json.decode(str));
 
@@ -27,6 +28,7 @@ class Message {
         //final camera? image = await _picker.pickVideo(source: ImageSource.gallery);
         //final camera? video = await _picker.pickVideo(source: ImageSource.camera);
         //final List<camera>? images = await _picker.pickMultiImage();
+        //getFileStream(url); // to get image
       );
 
   Map<String, dynamic> toJson() => {

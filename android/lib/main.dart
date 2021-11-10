@@ -3,6 +3,11 @@ import 'package:provider/provider.dart';
 import 'package:startup_namer/SignInHomepage.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'google_sign_in.dart';
+// ignore: unused_import
+import 'package:cached_network_image/cached_network_image.dart';
+// ignore: unused_import
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+//import 'package:flutter_cache_manager_firebase/flutter_cache_manager_firebase.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

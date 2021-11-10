@@ -25,4 +25,12 @@ class MyApp extends StatelessWidget {
           home: SignInHomePage(),
         ),
       );
+  // tried to implement local cache for images
+  /*
+  CachedNetworkImage(
+      imageUrl: "http://via.placeholder.com/350x150",
+      placeholder: (context, url) => CircularProgressIndicator(),
+      errorWidget: (context, url, error) => Icon(Icons.error),
+      );
+  */
 }

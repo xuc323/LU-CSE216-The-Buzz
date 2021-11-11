@@ -100,11 +100,8 @@ try {
 
 Image of our plan/sketch of our finite state machine is included in the "Downloads" section of the repository. The FSM concerns the actions associated with user voting (down-vote/up-vote/no interaction).
 
-<<<<<<< HEAD
 ![FSM](FSM.jpg)
 
-=======
->>>>>>> android
 ### Information on the use of "The Buzz" & APIs
 
 Included in each branch's README.md file

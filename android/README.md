@@ -97,3 +97,25 @@ Also, there are some dependencies that you need to add in the pubspec.yaml. If y
   provider: ^5.0.0
 
 
+## Phase 3
+In Phase 3, we are tasked with implementing the Camera and Gallery APIs to take pictures then attaching them to messages/comments, implementing a local cache, and updating the UI to display these files. A great resource in learning more about how to implement these tasks was https://flutter.dev/ as it provided examples and explanations for creating a local cache specifically for firebase and using the camera API.
+
+The dependencies that I added to the pubspec.yaml were:
+
+Dependencies for camera plugin
+
+```
+camera:
+path_provider:
+path:
+image_picker:
+```
+Dependency for local storage
+
+```
+cached_network_image: ^3.1.0+1
+```
+Dependency for local cache for images
+
+```flutter_cache_manager_firebase: ^2.0.1
+```

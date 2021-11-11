@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 //
 //  Generated file. Do not edit.
 //
@@ -12,3 +13,15 @@ func RegisterGeneratedPlugins(registry: FlutterPluginRegistry) {
   FLTFirebaseAuthPlugin.register(with: registry.registrar(forPlugin: "FLTFirebaseAuthPlugin"))
   FLTFirebaseCorePlugin.register(with: registry.registrar(forPlugin: "FLTFirebaseCorePlugin"))
 }
+=======
+//
+//  Generated file. Do not edit.
+//
+
+import FlutterMacOS
+import Foundation
+
+
+func RegisterGeneratedPlugins(registry: FlutterPluginRegistry) {
+}
+>>>>>>> android

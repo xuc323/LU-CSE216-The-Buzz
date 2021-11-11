@@ -105,3 +105,13 @@ Image of our plan/sketch of our finite state machine is included in the "Downloa
 ### Information on the use of "The Buzz" & APIs
 
 Included in each branch's README.md file
+
+### Phase 3 Documentation
+
+> Strategy for updating the database schema:
+
+- Right now we have three tables that stores **comments**, **ratings**, and **users**. Some of the data points are referenced by ids from other tables, so updating the schema will need to take that into consideration. The best way to update the schema is to create an updated table first, then compare the attributes and copy over the data to the matched attributes. Then we will be fine to delete the old table.
+
+> For phase 4:
+
+- Our group will need to choose option #1 because we still need to eliminate more technical debt. As for the new API, we will likely use Google Analytics or Google Translate. The first option will give us more information on how the website runs. If there's crashes or so. The second option will make our website more accessible for non-English speakers.

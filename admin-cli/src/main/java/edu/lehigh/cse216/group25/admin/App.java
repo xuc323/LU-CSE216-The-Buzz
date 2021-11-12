@@ -20,6 +20,7 @@ public class App {
      */
     static void menu() {
         System.out.println("Main Menu");
+        System.out.println("  [l] List documents info");
         System.out.println("  [T] Create table");
         System.out.println("  [D] Drop table");
         System.out.println("  [1] Query for a specific row");
@@ -27,6 +28,7 @@ public class App {
         System.out.println("  [-] Delete a row");
         System.out.println("  [+] Insert a new row");
         System.out.println("  [~] Update a row");
+        System.out.println("  [r] Remove least recently used content");
         System.out.println("  [q] Quit Program");
         System.out.println("  [?] Help (this message)");
     }
@@ -224,6 +226,29 @@ public class App {
                 if (res == -1)
                     continue;
                 System.out.println("  " + res + " rows updated");
+            } else if (action == 'l') { //list info
+                ArrayList<Database.RowData> res = db.selectAll();
+                if (res == null)
+                    continue;
+                System.out.println("  Current Database Contents");
+                System.out.println("  -------------------------");
+                for (Database.RowData rd : res) { // print all row data
+                    System.out.println("  [" + rd.mId + "] ");
+                    System.out.println("  [" + rd.mTitle + "] ");
+                    System.out.println("  [" + rd.mMessage + "] ");
+                    System.out.println("  [" + rd.mLikes + "] ");
+                    System.out.println("  [" + rd.mDislikes + "] ");
+                    System.out.println("  [" + rd.mDate + "] ");
+                }
+            } else if (action == 'r') { //remove least used content
+                int id = getInt(in, "Enter the message ID");
+                String email = getString(in, "Enter valid email");
+                if (id == -1)
+                    continue;
+                int res = db.deleteRow(id, email); // delete message pertaining to specified user
+                if (res == -1)
+                    continue;
+                System.out.println("  " + res + " rows deleted");
             }
         }
         // Always remember to disconnect from the database when the program

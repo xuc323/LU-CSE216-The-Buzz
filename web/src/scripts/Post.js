@@ -384,6 +384,15 @@ class Post extends React.Component {
                     <button type="button" className="btn btn-primary" id="commentSubmit" onClick={() => this.handleAddComment()}>Submit</button>
                     <button type="button" className="btn btn-primary" id="commentCancel" onClick={() => this.handleCommentCancel()}>Cancel</button>
                 </div>
+                <div className="File">
+                <input
+                    style={{display: 'none'}}
+                    type='file'
+                    onFileChange={this.onFileUpload}
+                    ref={fileInput => this.fileInput = fileInput}/>
+                    <button onClick={() => this.fileInput.click()}>Pick File</button>
+                    <button onClick={this.onFileUpload}>Upload</button>
+                </div> 
                 {/* showing all messages */}
                 <div className="container" id="messages">
                     <button type="button" className="btn btn-primary" onClick={() => this.handleAddClick()}>

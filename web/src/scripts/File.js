@@ -19,20 +19,13 @@ class File extends React.Component {
 
     // On file upload (click the upload button)
     onFileUpload = () => {
-    
-      // Create an object of formData
-      const formData = new FormData();
-    
-      // Update the formData object
-      formData.append(
-        "myFile",
-        this.state.selectedFile,
-        this.state.selectedFile.name
-      );
-    
-      // Details of the uploaded file
-      console.log(this.state.selectedFile);
-    
+        const formData = new FormData(); // Create an object of formData
+        formData.append("myFile", this.state.selectedFile, this.state.selectedFile.name); // Update the formData object
+        axios.post('postgres://pkdkdvttlfzyfu:6368fa21b4ffd5891b25a4700c6ee3e85350bec637fd33aabd57879c6b97efe1@ec2-3-225-204-194.compute-1.amazonaws.com:5432/d7oeuj2oslhi4l', formData);
+            then(res => {
+                console.log(res); // Details of the uploaded file
+            });
+
       // Request made to the backend api
       // Send formData object
       let fileField = document.getElementById("commentMessage");
@@ -67,8 +60,15 @@ class File extends React.Component {
 
     render() {
         return (
-            0 
+            <div className="File">
+                <input
+                style={{display: 'none'}}
+                type='file'
+                onChange={this.onFileChange}
+                ref={fileInput => this.fileInput = fileInput}/>
+                <button onClick={() => this.fileInput.click()}>Pick File</button>
+                <button onClick={this.onFileUpload}>Upload</button>
+            </div>
         )
     }
-
 }

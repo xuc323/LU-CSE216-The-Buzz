@@ -21,6 +21,7 @@ class File extends React.Component {
     onFileUpload = () => {
         const formData = new FormData(); // Create an object of formData
         formData.append("myFile", this.state.selectedFile, this.state.selectedFile.name); // Update the formData object
+        // Phase 4: refactoring axios to get choosing/uploading files on UI with Heroku database URL
         axios.post('postgres://pkdkdvttlfzyfu:6368fa21b4ffd5891b25a4700c6ee3e85350bec637fd33aabd57879c6b97efe1@ec2-3-225-204-194.compute-1.amazonaws.com:5432/d7oeuj2oslhi4l', formData);
             then(res => {
                 console.log(res); // Details of the uploaded file
@@ -52,14 +53,9 @@ class File extends React.Component {
         }
     };
 
-
-
-
-
-
-
     render() {
         return (
+            // Phase 4: refactoring to get choosing/uploading files on UI with Heroku database URL
             <div className="File">
                 <input
                 style={{display: 'none'}}

@@ -2,7 +2,7 @@ import React from "react"
 import {render, screen} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
-// simulate a user uploading an image
+// simulate a user uploading an image (using FSM.jpg)
 test('upload a file', () => {
   const file = new File(['FSM Diagram'], 'FSM.jpg', {type: 'image/jpg'})
 

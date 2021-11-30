@@ -6,6 +6,7 @@ import Post from "./scripts/Post.js";
 import { LoginBtn } from './scripts/User.js';
 import Navbar from "./scripts/Navbar.js";
 import Clock from './scripts/Clock';
+//import FlagContent from './scripts/FlagContent.js';
 
 // main function to layour each components
 class App extends React.Component {

@@ -373,6 +373,26 @@ class Post extends React.Component {
         }
     }
 
+    // handling blocking user
+    async handleBlockingUser(uId) {
+        //const url = "/messages/" + mId;
+        const url = "http://localhost:3000/uId" + uId;
+        try {
+            const response = await fetch(url, {
+                method: "DELETE",
+            });
+            const json = await response.json();
+            console.log(json);
+            if (json.mStatus === "ok") {
+                window.location.reload(true);
+            } else {
+                window.alert("Blocking user failed");
+            }
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
     render() {
         // for labeling the checkbox
         const { label } = 'Flag Message';
@@ -454,7 +474,8 @@ class Post extends React.Component {
                     <div className="container">
                     <div className="row">
                     <div className="col-sm-12">
-                        <button className="btn btn-primary" type="submit">Report Flagged Message</button>
+                    <button type="button" className="btn btn-secondary" onClick={() => this.handleFlaggingMessages}>Flag Message</button>
+                    <button type="button" className="btn btn-secondary" onClick={() => this.handleBlockingUser}>Block User</button>
                     </div>
                     </div>
                 </div>

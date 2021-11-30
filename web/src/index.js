@@ -21,6 +21,7 @@ class App extends React.Component {
     this.translate=this.translate.bind(this);
   }
 
+  // Phase 4: implementing translating service
   translate(){
     axios.post('postgres://pkdkdvttlfzyfu:6368fa21b4ffd5891b25a4700c6ee3e85350bec637fd33aabd57879c6b97efe1@ec2-3-225-204-194.compute-1.amazonaws.com:5432/d7oeuj2oslhi4l',{q:this.state.value})
     .then(data => {

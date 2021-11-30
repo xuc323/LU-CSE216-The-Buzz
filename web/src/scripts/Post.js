@@ -352,6 +352,26 @@ class Post extends React.Component {
             }
         }
     }
+    // Phase 4
+    // handling flagging messages
+    async handleFlaggingMessages(mId) {
+        //const url = "/messages/" + mId;
+        const url = "http://localhost:3000/messages" + mId;
+        try {
+            const response = await fetch(url, {
+                method: "DELETE",
+            });
+            const json = await response.json();
+            console.log(json);
+            if (json.mStatus === "ok") {
+                window.location.reload(true);
+            } else {
+                window.alert("Flagging message failed");
+            }
+        } catch (err) {
+            console.log(err);
+        }
+    }
 
     render() {
         // for labeling the checkbox

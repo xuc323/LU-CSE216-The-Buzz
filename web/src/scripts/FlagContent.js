@@ -2,9 +2,7 @@ import React, { Component } from 'react';
 import Checkbox from './Checkbox';
 
 const items = [
-  'Flag Message 1',
-  'Flag Message 2',
-  'Flag Message 3',
+  'Message 1'
 ];
 
 class FlagContent extends Component {
@@ -49,7 +47,7 @@ class FlagContent extends Component {
             <form onSubmit={this.handleFormSubmit}>
               {this.createCheckboxes()}
 
-              <button className="btn btn-default" type="submit">Save</button>
+              <button className="btn btn-default" type="submit">Report Flagged Message</button>
             </form>
 
           </div>

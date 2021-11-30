@@ -354,6 +354,9 @@ class Post extends React.Component {
     }
 
     render() {
+        // for labeling the checkbox
+        const { label } = 'Flag Message';
+        const { isChecked } = this.state;
         return (
             <div>
                 {/* adding new entry */}
@@ -398,6 +401,43 @@ class Post extends React.Component {
                         <button onClick={() => this.fileInput.click()}>Pick File</button>
                         <button onClick={this.onFileUpload}>Upload</button>
                     </div>
+                    <div className="checkbox">
+                    <input
+                        type="checkbox"
+                        value={label}
+                        checked={isChecked}
+                        onChange={this.toggleCheckboxChange}
+                        />
+                    {label}
+                    <label>Message 1: Hello</label>
+                    </div>
+                    <div className="checkbox">
+                    <input
+                        type="checkbox"
+                        value={label}
+                        checked={isChecked}
+                        onChange={this.toggleCheckboxChange}
+                        />
+                    {label}
+                    <label>Message 2: Hi</label>
+                    </div>
+                    <div className="checkbox">
+                    <input
+                        type="checkbox"
+                        value={label}
+                        checked={isChecked}
+                        onChange={this.toggleCheckboxChange}
+                        />
+                    {label}
+                    <label>Message 3: Hey</label>
+                    </div>
+                    <div className="container">
+                    <div className="row">
+                    <div className="col-sm-12">
+                        <button className="btn btn-primary" type="submit">Report Flagged Message</button>
+                    </div>
+                    </div>
+                </div>
                     {this.state.data.map(p => (
                         <div className="bg-light bg-gradient p-3 m-3" id={p.mId}>
                             <div>

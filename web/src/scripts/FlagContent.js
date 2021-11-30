@@ -2,7 +2,9 @@ import React, { Component } from 'react';
 import Checkbox from './Checkbox';
 
 const items = [
-  'Message 1'
+  'Message 1',
+  'Message 2',
+  'Message 3'
 ];
 
 class FlagContent extends Component {

@@ -352,8 +352,51 @@ class Post extends React.Component {
             }
         }
     }
+    // Phase 4
+    // handling flagging messages
+    async handleFlaggingMessages(mId) {
+        //const url = "/messages/" + mId;
+        const url = "http://localhost:3000/messages" + mId;
+        try {
+            const response = await fetch(url, {
+                method: "DELETE",
+            });
+            const json = await response.json();
+            console.log(json);
+            if (json.mStatus === "ok") {
+                window.location.reload(true);
+            } else {
+                window.alert("Flagging message failed");
+            }
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
+    // handling blocking user
+    async handleBlockingUser(uId) {
+        //const url = "/messages/" + mId;
+        const url = "http://localhost:3000/uId" + uId;
+        try {
+            const response = await fetch(url, {
+                method: "DELETE",
+            });
+            const json = await response.json();
+            console.log(json);
+            if (json.mStatus === "ok") {
+                window.location.reload(true);
+            } else {
+                window.alert("Blocking user failed");
+            }
+        } catch (err) {
+            console.log(err);
+        }
+    }
 
     render() {
+        // for labeling the checkbox
+        const { label } = 'Flag Message';
+        const { isChecked } = this.state;
         return (
             <div>
                 {/* adding new entry */}
@@ -389,6 +432,53 @@ class Post extends React.Component {
                     <button type="button" className="btn btn-primary" onClick={() => this.handleAddClick()}>
                         Add Message
                     </button>
+                    <div className="File">
+                        <input
+                            style={{display: 'none'}}
+                            type='file'
+                            onFileChange={this.onFileUpload}
+                            ref={fileInput => this.fileInput = fileInput}/>
+                        <button onClick={() => this.fileInput.click()}>Pick File</button>
+                        <button onClick={this.onFileUpload}>Upload</button>
+                    </div>
+                    <div className="checkbox">
+                    <input
+                        type="checkbox"
+                        value={label}
+                        checked={isChecked}
+                        onChange={this.toggleCheckboxChange}
+                        />
+                    {label}
+                    <label>Message 1: Hello</label>
+                    </div>
+                    <div className="checkbox">
+                    <input
+                        type="checkbox"
+                        value={label}
+                        checked={isChecked}
+                        onChange={this.toggleCheckboxChange}
+                        />
+                    {label}
+                    <label>Message 2: Hi</label>
+                    </div>
+                    <div className="checkbox">
+                    <input
+                        type="checkbox"
+                        value={label}
+                        checked={isChecked}
+                        onChange={this.toggleCheckboxChange}
+                        />
+                    {label}
+                    <label>Message 3: Hey</label>
+                    </div>
+                    <div className="container">
+                    <div className="row">
+                    <div className="col-sm-12">
+                    <button type="button" className="btn btn-secondary" onClick={() => this.handleFlaggingMessages}>Flag Message</button>
+                    <button type="button" className="btn btn-secondary" onClick={() => this.handleBlockingUser}>Block User</button>
+                    </div>
+                    </div>
+                </div>
                     {this.state.data.map(p => (
                         <div className="bg-light bg-gradient p-3 m-3" id={p.mId}>
                             <div>

@@ -1,18 +1,21 @@
-import React from "react"
+// Phase 4
+import React from 'react'
 import {render, screen} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
-// simulate a user uploading an image (using FSM.jpg)
-test('upload a file', () => {
-  const file = new File(['FSM Diagram'], 'FSM.jpg', {type: 'image/jpg'})
+test('upload file', () => {
+  const file = new File(['hello'], 'hello.png', {type: 'image/png'})
 
   render(
     <div>
-      <button onClick="file-uploader">Pick File</button>
-      <input id="file-uploader" type="file"/>
+      <label htmlFor="file-uploader">Pick File</label>
+      <input id="file-uploader" type="file" />
     </div>,
   )
+  const input = screen.getByLabelText(/Pick File/i)
   userEvent.upload(input, file)
 
+  expect(input.files[0]).toStrictEqual(file)
+  expect(input.files.item(0)).toStrictEqual(file)
   expect(input.files).toHaveLength(1)
-});
+})

@@ -68,3 +68,29 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 ### `npm run build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+
+
+# Phase 4: Web Developer's Manual & Documentation
+I started out with Phase 4 with the front end showing the toolbar, time, google sign-in button, and a button to add a message. What didn't seem to be functioning is being able to post a message which is most likely due to a problem with backend. Here's what I did in this phase.
+
+First I refactored the state of the code by adding onto the functionality of file sharing and being able to upload a pdf or image files which was somewhat implemented in the previous phase. I did this by implementing Axios with Heroku to create “pick file” and “upload” buttons on the website. Axios is a Javascript library that serves to create HTTP requests that are present externally and allows you to call backend API interfaces from React front end. Also created a unit test for uploading a file.
+
+You can learn more about Axios here: https://medium.com/geekculture/learn-to-use-axios-with-react-ee92829d8ed6
+
+I also used Axios to try to implement translating from one language to another.
+* Installed: npm install --save-dev @testing-library/user-event @testing-library/dom
+* For testing `file.test.js`
+
+Next I tried to implement flagging content using checkboxes and a button to do this. The logic behind it is that the user can check the message or messages they would like to report and then theoretically it would send to backend and move that data to another table and the message(s) would not display anymore/delete the message in its entirety. I created a function in Post.js called `handleFlaggingMessages` that passes an argument of the message ID (mId) to specify the message and delete it if checked.
+
+Similarly for attempting to implement blocking a user, I created a function in Post.js called `handleBlockingUser` that passes the user ID (uId) and will delete the user and their information from the database if checked.
+
+Editing and deleting messages was implemented already from a previous phase.
+
+## Important resources
+Bitbucket Repository: https://bitbucket.org/chm321/cse216_group25/src/master/
+
+The branches that matter for web frontend are `web` and `backend`.
+
+## The Code
+Since backend was not working when completing phase 4, I tested web locally. First run `npm install` and then `npm start` to run the app.

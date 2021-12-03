@@ -96,7 +96,7 @@ class TakePictureScreenState extends State<TakePictureScreen> {
             final image = await _controller
                 .takePicture(); // try to take a picture and get the file where it was saved
 
-            file.upload(image);
+            await file.upload(image);
             await Navigator.of(context).push(
               // if picture was taken, display on new screen
               MaterialPageRoute(

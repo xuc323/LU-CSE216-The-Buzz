@@ -13,7 +13,7 @@ upload(XFile imageFile) async {
   var length = await imageFile.length();
 
   // string to uri
-  var uri = Uri.parse("http://ip:8082/composer/predict");
+  var uri = Uri.parse("https://the-buzz-group25.herokuapp.com/files");
 
   // create multipart request
   var request = new http.MultipartRequest("POST", uri);

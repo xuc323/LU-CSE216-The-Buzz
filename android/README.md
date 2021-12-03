@@ -150,6 +150,13 @@ Each `README.md` will contain basic documentations for that role. `backend` shou
 
 **Environment Variables:** Git, NPM, MVN, Flutter, sh
 
+## Functions
+
+- Signin with Google
+- Communicate with backend through API
+- Camera
+- File sending
+
 ## Known bugs, limitations
 
 Backend would need to incorporate the user sign-in feature in order for the app to work properly.

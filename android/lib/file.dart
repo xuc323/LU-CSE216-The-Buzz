@@ -1,10 +1,11 @@
+import 'package:camera/camera.dart';
 import 'package:path/path.dart';
 import 'package:async/async.dart';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-upload(File imageFile) async {
+upload(XFile imageFile) async {
   // open a bytestream
   var stream =
       new http.ByteStream(DelegatingStream.typed(imageFile.openRead()));

@@ -88,30 +88,28 @@ class TakePictureScreenState extends State<TakePictureScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         // make a button
-        onPressed: () {
-          file.upload(imageFile);
+        onPressed: () async {
+          try {
+            // try taking a picture
+            await _initializeControllerFuture; // make sure the camera is initialized
+
+            final image = await _controller
+                .takePicture(); // try to take a picture and get the file where it was saved
+
+            file.upload(image);
+            await Navigator.of(context).push(
+              // if picture was taken, display on new screen
+              MaterialPageRoute(
+                builder: (context) => DisplayPictureScreen(
+                  // pass the generated path to DisplayPictureScreen widget
+                  imagePath: image.path,
+                ),
+              ),
+            );
+          } catch (e) {
+            print(e); // if error, print log to console
+          }
         },
-        //() async {
-        //   try {
-        //     // try taking a picture
-        //     await _initializeControllerFuture; // make sure the camera is initialized
-
-        //     final image = await _controller
-        //         .takePicture(); // try to take a picture and get the file where it was saved
-
-        //     await Navigator.of(context).push(
-        //       // if picture was taken, display on new screen
-        //       MaterialPageRoute(
-        //         builder: (context) => DisplayPictureScreen(
-        //           // pass the generated path to DisplayPictureScreen widget
-        //           imagePath: image.path,
-        //         ),
-        //       ),
-        //     );
-        //   } catch (e) {
-        //     print(e); // if error, print log to console
-        //   }
-        // },
         child: const Icon(Icons.camera_alt),
       ),
     );

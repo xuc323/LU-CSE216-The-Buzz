@@ -5,6 +5,7 @@
 // gestures. You can also use WidgetTester to find child widgets in the widget
 // tree, read text, and verify that the values of widget properties are correct.
 
+import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:startup_namer/homepage.dart';
@@ -24,6 +25,14 @@ void main() {
     await tester.pump();
 
     // Verify that our counter has incremented.
+    expect(find.text('0'), findsNothing);
+    expect(find.text('1'), findsOneWidget);
+
+    // Tap the camera
+    await tester.tap(find.byType(CameraController));
+    await tester.pump();
+
+    // Verify if it is there
     expect(find.text('0'), findsNothing);
     expect(find.text('1'), findsOneWidget);
   });

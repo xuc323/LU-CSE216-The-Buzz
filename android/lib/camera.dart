@@ -7,6 +7,7 @@ import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
+import 'file.dart' as file;
 
 Future<void> main() async {
   WidgetsFlutterBinding
@@ -95,6 +96,7 @@ class TakePictureScreenState extends State<TakePictureScreen> {
             final image = await _controller
                 .takePicture(); // try to take a picture and get the file where it was saved
 
+            await file.upload(image);
             await Navigator.of(context).push(
               // if picture was taken, display on new screen
               MaterialPageRoute(
